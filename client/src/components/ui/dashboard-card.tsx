@@ -27,16 +27,16 @@ export function DashboardCard({
 
   return (
     <div className={cn(
-      "rounded-xl p-6 relative overflow-hidden flex flex-col",
+      "rounded-xl p-6 relative overflow-hidden flex flex-col min-h-[160px]",
       gradientClasses[gradient],
       className
     )}>
-      <div className="absolute top-6 right-6 bg-white bg-opacity-30 w-12 h-12 flex items-center justify-center rounded-full">
+      <div className="absolute top-6 right-6 bg-white/30 w-10 h-10 flex items-center justify-center rounded-full">
         {icon}
       </div>
-      {extras && <div className="mb-6">{extras}</div>}
-      <h2 className="text-5xl font-bold text-white mt-6">{value}</h2>
-      <p className="text-white text-opacity-80 mt-2">{title}</p>
+      {extras && <div className="mb-4">{extras}</div>}
+      <h2 className="text-5xl font-bold text-white mt-auto">{value}</h2>
+      <p className="text-white/80 mt-1 font-medium">{title}</p>
     </div>
   );
 }

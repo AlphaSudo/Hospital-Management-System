@@ -1,11 +1,13 @@
 export const COLORS = {
-  darkBg: '#0F0B22',
-  darkPurple: '#1A142F',
+  darkBg: '#120A2A',  // Corrected main background color
+  darkPurple: '#1E1139', // Corrected card background
   lightBlue: '#3DB9FF',
   lightPurple: '#9747FF',
   pinkAccent: '#FF57E6',
   orangeAccent: '#FF5757',
   yellowAccent: '#FFB800',
+  gradientMorning: '#3DB9FF', // For Good morning text
+  gradientName: '#FF57E6',   // For Sarah text
 };
 
 export const GRADIENTS = {

@@ -16,8 +16,11 @@ export function Sidebar() {
       name: "Dashboard",
       path: "/",
       icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-          <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="3" y="3" width="7" height="7" />
+          <rect x="14" y="3" width="7" height="7" />
+          <rect x="14" y="14" width="7" height="7" />
+          <rect x="3" y="14" width="7" height="7" />
         </svg>
       )
     },
@@ -25,8 +28,11 @@ export function Sidebar() {
       name: "Appointments",
       path: "/appointments",
       icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-          <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+          <line x1="16" y1="2" x2="16" y2="6" />
+          <line x1="8" y1="2" x2="8" y2="6" />
+          <line x1="3" y1="10" x2="21" y2="10" />
         </svg>
       )
     },
@@ -34,8 +40,9 @@ export function Sidebar() {
       name: "Doctors",
       path: "/doctors",
       icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-          <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+          <circle cx="12" cy="7" r="4" />
         </svg>
       )
     },
@@ -43,9 +50,8 @@ export function Sidebar() {
       name: "Departments",
       path: "/departments",
       icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-          <path d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z" />
-          <path d="M15 7v2a4 4 0 01-4 4H9.828l-1.766 1.767c.28.149.599.233.938.233h2l3 3v-3h2a2 2 0 002-2V9a2 2 0 00-2-2h-1z" />
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
         </svg>
       )
     },
@@ -53,21 +59,26 @@ export function Sidebar() {
       name: "Reports",
       path: "/reports",
       icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-          <path fillRule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm2 10a1 1 0 10-2 0v3a1 1 0 102 0v-3zm2-3a1 1 0 011 1v5a1 1 0 11-2 0v-5a1 1 0 011-1zm4-1a1 1 0 10-2 0v7a1 1 0 102 0V8z" clipRule="evenodd" />
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+          <polyline points="14 2 14 8 20 8" />
+          <line x1="16" y1="13" x2="8" y2="13" />
+          <line x1="16" y1="17" x2="8" y2="17" />
+          <polyline points="10 9 9 9 8 9" />
         </svg>
       )
     }
   ];
 
   return (
-    <div className="w-64 flex-shrink-0 bg-sidebar bg-opacity-40 flex flex-col h-full border-r border-gray-800">
+    <div className="w-[160px] flex-shrink-0 bg-sidebar/40 flex flex-col h-full border-r border-gray-800/30">
       {/* Logo */}
       <div className="p-6 flex items-center">
         <div className="flex items-center gap-2">
           <div className="gradient-bg-purple rounded-md p-1 w-8 h-8 flex items-center justify-center">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="text-white" viewBox="0 0 16 16">
-              <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
             </svg>
           </div>
           <span className="text-xl font-bold text-white">Cliniva</span>
@@ -75,15 +86,15 @@ export function Sidebar() {
       </div>
       
       {/* User Profile */}
-      <div className="p-6 flex flex-col items-center mb-6">
-        <div className="w-20 h-20 rounded-full overflow-hidden mb-2">
+      <div className="px-6 py-4 flex flex-col items-center mb-6">
+        <div className="w-[80px] h-[80px] rounded-full overflow-hidden mb-2 border-2 border-purple-500/20">
           <img 
             src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&h=200&auto=format&fit=crop" 
             alt="Profile" 
             className="w-full h-full object-cover" 
           />
         </div>
-        <h3 className="text-lg font-semibold">Sarah Smith</h3>
+        <h3 className="text-lg font-semibold text-white mt-2">Sarah Smith</h3>
         <p className="text-sm text-gray-400">Admin</p>
       </div>
       
@@ -91,28 +102,28 @@ export function Sidebar() {
       <div className="flex-1 flex flex-col gap-1 px-4">
         {navigationItems.map((item) => (
           <Link key={item.name} href={item.path}>
-            <a className={cn(
-              "py-3 px-4 flex items-center gap-3 hover:bg-purple-900 hover:bg-opacity-20 rounded-lg transition",
+            <span className={cn(
+              "py-3 px-4 flex items-center gap-3 hover:bg-purple-900/20 rounded-lg transition cursor-pointer",
               location === item.path ? "active-nav" : ""
             )}>
-              <span className={location === item.path ? "text-purple-300" : "text-gray-400"}>
+              <span className={location === item.path ? "text-purple-400" : "text-gray-500"}>
                 {item.icon}
               </span>
               <span className={cn(
                 "font-medium",
-                location === item.path ? "text-purple-300" : "text-gray-300" 
+                location === item.path ? "text-purple-400" : "text-gray-400" 
               )}>
                 {item.name}
               </span>
-            </a>
+            </span>
           </Link>
         ))}
         
-        <div className="mt-auto mb-8 py-3 px-4 flex items-center gap-3 hover:bg-purple-900 hover:bg-opacity-20 rounded-lg transition cursor-pointer">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+        <div className="mt-auto mb-8 py-3 px-4 flex items-center gap-3 hover:bg-purple-900/20 rounded-lg transition cursor-pointer">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
           </svg>
-          <span className="font-medium text-gray-300">Dark Mode</span>
+          <span className="font-medium text-gray-400">Dark Mode</span>
         </div>
       </div>
     </div>
