@@ -83,6 +83,19 @@
   
   .gradient-bg-sidebar {
     background: linear-gradient(180deg, #0A0035 0%, #060026 100%);
+    position: relative;
+  }
+  
+  .gradient-bg-sidebar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 1.5px;
+    height: 100%;
+    background: linear-gradient(180deg, #3DB9FF, #9747FF);
+    box-shadow: 0 0 8px 1px rgba(61, 185, 255, 0.7), 0 0 15px 2px rgba(61, 185, 255, 0.4), 0 0 25px rgba(151, 71, 255, 0.3);
+    opacity: 0.85;
   }
   
   /* Text gradients */

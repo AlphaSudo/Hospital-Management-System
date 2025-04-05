@@ -71,7 +71,7 @@ export function Sidebar() {
   ];
 
   return (
-    <div className="w-[200px] flex-shrink-0 gradient-bg-sidebar flex flex-col h-full border-r border-[#5D0A72]/20">
+    <div className="w-[200px] flex-shrink-0 gradient-bg-sidebar flex flex-col h-full">
       {/* Logo */}
       <div className="pt-8 pb-6 px-6 flex items-center">
         <div className="flex items-center gap-2">
