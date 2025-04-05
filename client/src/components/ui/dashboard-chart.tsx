@@ -1,5 +1,4 @@
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Area } from 'recharts';
-import { ChartGradients } from '@/lib/chart-gradients';
 
 export interface HospitalSurveyData {
   month: string;
@@ -13,66 +12,71 @@ export interface HospitalSurveyChartProps {
 
 export function HospitalSurveyChart({ data }: HospitalSurveyChartProps) {
   return (
-    <div className="rounded-xl p-6 bg-[#05002E] card-glow">
-      <div className="flex items-center justify-between mb-6">
-        <h3 className="text-white font-bold text-xl">HOSPITAL SURVEY</h3>
-        <div className="flex items-center gap-6">
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-[#FF5757]"></div>
-            <span className="text-sm text-gray-300">New Patients</span>
+    <div className="rounded-2xl p-7 bg-[#05002E] card-glow border border-[#5D0A72]/10 h-full">
+      <div className="flex items-center justify-between mb-8">
+        <h3 className="text-white font-bold text-xl tracking-tight">Hospital Survey</h3>
+        <div className="flex items-center gap-7">
+          <div className="flex items-center gap-2.5">
+            <div className="w-3.5 h-3.5 rounded-full bg-[#FF5757]"></div>
+            <span className="text-sm text-[#94A3B8]">New Patients</span>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-[#9747FF]"></div>
-            <span className="text-sm text-gray-300">All Patients</span>
+          <div className="flex items-center gap-2.5">
+            <div className="w-3.5 h-3.5 rounded-full bg-[#9747FF]"></div>
+            <span className="text-sm text-[#94A3B8]">All Patients</span>
           </div>
         </div>
       </div>
       
-      <div className="h-[240px]">
+      <div className="h-[260px]">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={data}>
-            <defs>
-              <ChartGradients />
-            </defs>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#2A2040" />
+          <LineChart data={data} margin={{ top: 5, right: 5, left: 0, bottom: 5 }}>
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#2A2040" opacity={0.3} />
             <XAxis 
               dataKey="month" 
               axisLine={false} 
               tickLine={false} 
-              tick={{ fill: '#6B7280', fontSize: 12 }}
+              tick={{ fill: '#94A3B8', fontSize: 12 }}
+              dy={10}
             />
             <YAxis 
               axisLine={false} 
               tickLine={false} 
-              tick={{ fill: '#6B7280', fontSize: 12 }}
+              tick={{ fill: '#94A3B8', fontSize: 12 }}
               domain={[0, 200]}
-              ticks={[10, 50, 100, 120]}
+              ticks={[0, 50, 100, 150, 200]}
+              dx={-10}
             />
             <Tooltip 
               contentStyle={{ 
-                backgroundColor: 'rgba(26, 20, 47, 0.9)', 
-                borderColor: '#3C2E63',
-                borderRadius: '8px',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.25)'
+                backgroundColor: 'rgba(10, 0, 74, 0.9)', 
+                borderColor: '#5D0A72',
+                borderRadius: '12px',
+                boxShadow: '0 8px 32px rgba(0,0,0,0.35)',
+                padding: '10px 14px'
               }}
-              itemStyle={{ color: '#fff' }}
-              labelStyle={{ color: '#9CA3AF' }}
+              itemStyle={{ color: '#fff', fontSize: '13px', padding: '3px 0' }}
+              labelStyle={{ color: '#94A3B8', fontWeight: 'bold', marginBottom: '5px' }}
+              cursor={{ stroke: '#5D0A72', strokeWidth: 1, strokeDasharray: '5 5' }}
             />
             <Area 
               type="monotone" 
               dataKey="newPatients" 
               stroke="#FF5757" 
               strokeWidth={3}
-              fill="url(#orangeGradient)"
-              fillOpacity={0.2}
+              fill="url(#chartOrangeGradient)"
+              fillOpacity={0.6}
+              className="chart-area-gradient-orange"
+              activeDot={{ r: 6, fill: '#FF5757', stroke: '#FFFFFF', strokeWidth: 2 }}
             />
             <Area 
               type="monotone" 
               dataKey="allPatients" 
               stroke="#9747FF" 
               strokeWidth={3}
-              fill="url(#purpleGradient)"
-              fillOpacity={0.2}
+              fill="url(#chartPurpleGradient)"
+              fillOpacity={0.6}
+              className="chart-area-gradient-purple"
+              activeDot={{ r: 6, fill: '#9747FF', stroke: '#FFFFFF', strokeWidth: 2 }}
             />
           </LineChart>
         </ResponsiveContainer>

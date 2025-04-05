@@ -71,23 +71,23 @@ export function Sidebar() {
   ];
 
   return (
-    <div className="w-[160px] flex-shrink-0 bg-[#080035] flex flex-col h-full border-r border-[#5D0A72]/30">
+    <div className="w-[200px] flex-shrink-0 gradient-bg-sidebar flex flex-col h-full border-r border-[#5D0A72]/20">
       {/* Logo */}
-      <div className="p-6 flex items-center">
+      <div className="pt-8 pb-6 px-6 flex items-center">
         <div className="flex items-center gap-2">
-          <div className="gradient-bg-purple rounded-md p-1 w-8 h-8 flex items-center justify-center">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <div className="gradient-bg-purple rounded-md p-1.5 w-9 h-9 flex items-center justify-center shadow-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="12" y1="5" x2="12" y2="19" />
               <line x1="5" y1="12" x2="19" y2="12" />
             </svg>
           </div>
-          <span className="text-xl font-bold text-white">Cliniva</span>
+          <span className="text-xl font-bold text-white tracking-tight">Cliniva</span>
         </div>
       </div>
       
       {/* User Profile */}
-      <div className="px-6 py-4 flex flex-col items-center mb-6">
-        <div className="w-[80px] h-[80px] rounded-full overflow-hidden mb-2 border-2 border-purple-500/20">
+      <div className="px-6 py-4 flex flex-col items-center mb-8">
+        <div className="w-[90px] h-[90px] rounded-full overflow-hidden mb-3 border-2 border-[#5D0A72]/30 shadow-xl">
           <img 
             src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&h=200&auto=format&fit=crop" 
             alt="Profile" 
@@ -95,23 +95,23 @@ export function Sidebar() {
           />
         </div>
         <h3 className="text-lg font-semibold text-white mt-2">Sarah Smith</h3>
-        <p className="text-sm text-gray-400">Admin</p>
+        <p className="text-sm text-[#94A3B8]/80">Admin</p>
       </div>
       
       {/* Navigation */}
-      <div className="flex-1 flex flex-col gap-1 px-4">
+      <div className="flex-1 flex flex-col gap-2 px-5">
         {navigationItems.map((item) => (
           <Link key={item.name} href={item.path}>
             <span className={cn(
-              "py-3 px-4 flex items-center gap-3 hover:bg-[#5D0A72]/20 rounded-lg transition cursor-pointer",
+              "py-3.5 px-4 flex items-center gap-3.5 hover:bg-[#5D0A72]/20 rounded-xl transition cursor-pointer",
               location === item.path ? "active-nav" : ""
             )}>
-              <span className={location === item.path ? "text-[#5D0A72]" : "text-gray-500"}>
+              <span className={location === item.path ? "text-[#5D0A72]" : "text-[#94A3B8]/80"}>
                 {item.icon}
               </span>
               <span className={cn(
-                "font-medium",
-                location === item.path ? "text-[#5D0A72]" : "text-gray-400" 
+                "font-medium text-sm",
+                location === item.path ? "text-[#5D0A72]" : "text-[#94A3B8]/80" 
               )}>
                 {item.name}
               </span>
@@ -119,11 +119,11 @@ export function Sidebar() {
           </Link>
         ))}
         
-        <div className="mt-auto mb-8 py-3 px-4 flex items-center gap-3 hover:bg-[#5D0A72]/20 rounded-lg transition cursor-pointer">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <div className="mt-auto mb-8 py-3.5 px-4 flex items-center gap-3 hover:bg-[#5D0A72]/20 rounded-xl transition cursor-pointer">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-[#94A3B8]/80" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
           </svg>
-          <span className="font-medium text-gray-400">Dark Mode</span>
+          <span className="font-medium text-sm text-[#94A3B8]/80">Dark Mode</span>
         </div>
       </div>
     </div>

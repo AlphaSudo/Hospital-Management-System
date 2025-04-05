@@ -27,16 +27,24 @@ export function DashboardCard({
 
   return (
     <div className={cn(
-      "rounded-xl p-6 relative overflow-hidden flex flex-col min-h-[160px]",
+      "rounded-2xl p-7 relative overflow-hidden flex flex-col min-h-[170px] border border-white/5 shadow-lg",
       gradientClasses[gradient],
       className
     )}>
-      <div className="absolute top-6 right-6 bg-white/20 w-10 h-10 flex items-center justify-center rounded-full backdrop-blur-sm">
+      <div className="absolute top-7 right-7 bg-white/20 w-11 h-11 flex items-center justify-center rounded-xl backdrop-blur-sm shadow-inner">
         {icon}
       </div>
-      {extras && <div className="mb-4">{extras}</div>}
-      <h2 className="text-5xl font-bold text-white mt-auto">{value}</h2>
-      <p className="text-white/80 mt-1 font-medium">{title}</p>
+      
+      <div className="flex flex-col justify-between h-full">
+        <div className="mb-auto pt-12">
+          {extras && <div>{extras}</div>}
+        </div>
+        
+        <div>
+          <h2 className="text-[42px] font-bold text-white leading-tight tracking-tight">{value}</h2>
+          <p className="text-white/80 mt-1 font-medium text-sm">{title}</p>
+        </div>
+      </div>
     </div>
   );
 }
