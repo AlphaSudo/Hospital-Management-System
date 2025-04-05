@@ -14,10 +14,10 @@ export function RevenueChart({ percentage, barData }: RevenueChartProps) {
   ];
 
   return (
-    <div className="rounded-xl p-6 bg-card card-glow">
+    <div className="rounded-xl p-6 bg-[#05002E] card-glow">
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-white font-bold text-xl">Revenue</h3>
-        <span className="text-blue-400 text-xl font-bold">{percentage}%</span>
+        <span className="text-[#3DB9FF] text-xl font-bold">{percentage}%</span>
       </div>
       
       <div className="flex flex-col gap-6">

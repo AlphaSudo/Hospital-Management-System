@@ -11,12 +11,12 @@ export default function Dashboard() {
       <Sidebar />
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-y-auto bg-background">
+      <div className="flex-1 flex flex-col overflow-y-auto bg-[#070028]">
         {/* Header */}
         <header className="h-20 px-6 flex items-center justify-between">
           {/* Header Title with icon */}
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 flex items-center justify-center bg-card/80 rounded-md">
+            <div className="w-8 h-8 flex items-center justify-center bg-[#05002E]/80 rounded-md">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <rect x="3" y="3" width="7" height="7" />
                 <rect x="14" y="3" width="7" height="7" />
@@ -39,18 +39,18 @@ export default function Dashboard() {
               <input 
                 type="text" 
                 placeholder="Search" 
-                className="bg-card/40 w-64 text-sm py-2 pl-10 pr-4 rounded-full text-gray-300 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="bg-[#05002E]/40 w-64 text-sm py-2 pl-10 pr-4 rounded-full text-gray-300 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#5D0A72]"
               />
             </div>
             
-            <div className="w-10 h-10 flex items-center justify-center rounded-full bg-card/40">
+            <div className="w-10 h-10 flex items-center justify-center rounded-full bg-[#05002E]/40">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
                 <path d="M13.73 21a2 2 0 0 1-3.46 0" />
               </svg>
             </div>
             
-            <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-purple-500/20">
+            <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-[#5D0A72]/20">
               <img 
                 src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&h=200&auto=format&fit=crop" 
                 alt="Profile" 
@@ -68,7 +68,7 @@ export default function Dashboard() {
               <span className="text-white">Good </span>
               <span className="text-[#3DB9FF]">morning,</span>
             </h1>
-            <h2 className="text-4xl font-bold text-[#FF57E6]">Sarah</h2>
+            <h2 className="text-4xl font-bold bg-gradient-to-r from-[#FF57E6] to-[#9747FF] text-transparent bg-clip-text">Sarah</h2>
           </div>
 
           {/* Stats Grid */}
@@ -147,10 +147,10 @@ export default function Dashboard() {
           {/* Bottom Section */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
             {/* Total Appointments */}
-            <div className="rounded-xl p-6 bg-card card-glow">
+            <div className="rounded-xl p-6 bg-[#05002E] card-glow">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-white font-bold text-xl">Total Appointments</h3>
-                <a href="#" className="text-purple-400 text-sm flex items-center">
+                <a href="#" className="text-[#5D0A72] text-sm flex items-center">
                   View All 
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="9 18 15 12 9 6" />
@@ -160,17 +160,17 @@ export default function Dashboard() {
               
               {/* Empty appointment list */}
               <div className="flex flex-col gap-4">
-                <div className="h-12 rounded-md bg-darkPurple/50"></div>
-                <div className="h-12 rounded-md bg-darkPurple/50"></div>
-                <div className="h-12 rounded-md bg-darkPurple/50"></div>
+                <div className="h-12 rounded-md bg-[#02001E]/50"></div>
+                <div className="h-12 rounded-md bg-[#02001E]/50"></div>
+                <div className="h-12 rounded-md bg-[#02001E]/50"></div>
               </div>
             </div>
 
             {/* Doctor Status */}
-            <div className="rounded-xl p-6 bg-card card-glow">
+            <div className="rounded-xl p-6 bg-[#05002E] card-glow">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-white font-bold text-xl">Doctor Status</h3>
-                <a href="#" className="text-purple-400 text-sm flex items-center">
+                <a href="#" className="text-[#5D0A72] text-sm flex items-center">
                   View All 
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="9 18 15 12 9 6" />
@@ -180,9 +180,9 @@ export default function Dashboard() {
               
               {/* Empty doctor list */}
               <div className="flex flex-col gap-4">
-                <div className="h-12 rounded-md bg-darkPurple/50"></div>
-                <div className="h-12 rounded-md bg-darkPurple/50"></div>
-                <div className="h-12 rounded-md bg-darkPurple/50"></div>
+                <div className="h-12 rounded-md bg-[#02001E]/50"></div>
+                <div className="h-12 rounded-md bg-[#02001E]/50"></div>
+                <div className="h-12 rounded-md bg-[#02001E]/50"></div>
               </div>
             </div>
           </div>

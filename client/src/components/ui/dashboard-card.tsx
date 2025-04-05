@@ -31,7 +31,7 @@ export function DashboardCard({
       gradientClasses[gradient],
       className
     )}>
-      <div className="absolute top-6 right-6 bg-white/30 w-10 h-10 flex items-center justify-center rounded-full">
+      <div className="absolute top-6 right-6 bg-white/20 w-10 h-10 flex items-center justify-center rounded-full backdrop-blur-sm">
         {icon}
       </div>
       {extras && <div className="mb-4">{extras}</div>}

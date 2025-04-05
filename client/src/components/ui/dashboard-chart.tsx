@@ -13,7 +13,7 @@ export interface HospitalSurveyChartProps {
 
 export function HospitalSurveyChart({ data }: HospitalSurveyChartProps) {
   return (
-    <div className="rounded-xl p-6 bg-card card-glow">
+    <div className="rounded-xl p-6 bg-[#05002E] card-glow">
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-white font-bold text-xl">HOSPITAL SURVEY</h3>
         <div className="flex items-center gap-6">

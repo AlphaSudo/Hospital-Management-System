@@ -18,7 +18,7 @@ export function BarChart({ data }: BarChartProps) {
           <div 
             key={index}
             className={cn(
-              "w-1/5 bg-gradient-to-t from-purple-600 to-purple-400 rounded-t-md",
+              "w-1/5 bg-gradient-to-t from-[#0A004A] to-[#3DB9FF] rounded-t-md",
               "transition-all duration-500"
             )}
             style={{ height: `${heightPercentage}%` }}

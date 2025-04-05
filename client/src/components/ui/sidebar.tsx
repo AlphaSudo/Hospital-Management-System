@@ -71,7 +71,7 @@ export function Sidebar() {
   ];
 
   return (
-    <div className="w-[160px] flex-shrink-0 bg-sidebar/40 flex flex-col h-full border-r border-gray-800/30">
+    <div className="w-[160px] flex-shrink-0 bg-[#080035] flex flex-col h-full border-r border-[#5D0A72]/30">
       {/* Logo */}
       <div className="p-6 flex items-center">
         <div className="flex items-center gap-2">
@@ -103,15 +103,15 @@ export function Sidebar() {
         {navigationItems.map((item) => (
           <Link key={item.name} href={item.path}>
             <span className={cn(
-              "py-3 px-4 flex items-center gap-3 hover:bg-purple-900/20 rounded-lg transition cursor-pointer",
+              "py-3 px-4 flex items-center gap-3 hover:bg-[#5D0A72]/20 rounded-lg transition cursor-pointer",
               location === item.path ? "active-nav" : ""
             )}>
-              <span className={location === item.path ? "text-purple-400" : "text-gray-500"}>
+              <span className={location === item.path ? "text-[#5D0A72]" : "text-gray-500"}>
                 {item.icon}
               </span>
               <span className={cn(
                 "font-medium",
-                location === item.path ? "text-purple-400" : "text-gray-400" 
+                location === item.path ? "text-[#5D0A72]" : "text-gray-400" 
               )}>
                 {item.name}
               </span>
@@ -119,7 +119,7 @@ export function Sidebar() {
           </Link>
         ))}
         
-        <div className="mt-auto mb-8 py-3 px-4 flex items-center gap-3 hover:bg-purple-900/20 rounded-lg transition cursor-pointer">
+        <div className="mt-auto mb-8 py-3 px-4 flex items-center gap-3 hover:bg-[#5D0A72]/20 rounded-lg transition cursor-pointer">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
           </svg>
