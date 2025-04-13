@@ -15,7 +15,7 @@ export default function Dashboard() {
       <Sidebar />
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-y-auto gradient-bg-background">
+      <div className="flex-1 flex flex-col overflow-y-auto bg-[#040223] gradient-bg-background">
         {/* Header */}
         <header className="h-24 px-8 flex items-center justify-between border-b border-[#5D0A72]/10">
           {/* Header Title with icon */}
