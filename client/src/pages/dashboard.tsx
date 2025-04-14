@@ -90,14 +90,43 @@ export default function Dashboard() {
               </svg>
             </div>
             
-            {/* Language Selector */}
+            {/* Language Selector - with flags */}
             <button
               onClick={() => setLanguage(language === 'en' ? 'ar' : 'en')}
-              className="w-11 h-11 flex items-center justify-center rounded-full bg-[#05002E] border border-[#5D0A72]/10 shadow-md hover:bg-[#0A004A]/20 transition-colors"
+              className="w-11 h-11 flex items-center justify-center rounded-full bg-[#05002E] border border-[#5D0A72]/10 shadow-md hover:bg-[#0A004A]/20 transition-colors overflow-hidden p-0"
             >
-              <div className="flex items-center justify-center">
-                <span className="text-[#94A3B8] font-medium text-sm">{language === 'en' ? 'EN' : 'AR'}</span>
-              </div>
+              {language === 'en' ? (
+                <div className="flex items-center justify-center w-full h-full">
+                  {/* UK Flag */}
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 30" className="w-7 h-7">
+                    <clipPath id="a"><path d="M0 0v30h60V0z"/></clipPath>
+                    <clipPath id="b"><path d="M30 15h30v15zv15H0zH0V0zV0h30z"/></clipPath>
+                    <g clipPath="url(#a)">
+                      <path d="M0 0v30h60V0z" fill="#012169"/>
+                      <path d="M0 0l60 30m0-30L0 30" stroke="#fff" strokeWidth="6"/>
+                      <path d="M0 0l60 30m0-30L0 30" clipPath="url(#b)" stroke="#C8102E" strokeWidth="4"/>
+                      <path d="M30 0v30M0 15h60" stroke="#fff" strokeWidth="10"/>
+                      <path d="M30 0v30M0 15h60" stroke="#C8102E" strokeWidth="6"/>
+                    </g>
+                  </svg>
+                </div>
+              ) : (
+                <div className="flex items-center justify-center w-full h-full">
+                  {/* Egypt Flag */}
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" className="w-7 h-7">
+                    <path fill="#CE1126" d="M0 0h900v600H0z"/>
+                    <path fill="#FFF" d="M0 0h900v400H0z"/>
+                    <path d="M0 0h900v200H0z"/>
+                    <g fill="#C09300" transform="translate(450, 300)">
+                      <path d="M-39.6 40.8s66-28.8 79.2 0C39.6 40.8-12 12-39.6 40.8z"/>
+                      <path d="M-36 31.2s57.6-28.8 72 0c-36-31.2-36-31.2-72 0z"/>
+                      <path d="M-26.4 24s45.6-21.6 52.8 0c-24-24-52.8 0-52.8 0z"/>
+                      <path d="M-33.6-43.2c-15.6 15.6-8.4 48 7.2 64.8 12 13.2 38.4 31.2 38.4 31.2S18.2 36.9 4.4 19.7C-9.4 2.5-19.8-18.9-14.6-35.3c6-19.2-4.8-22.8-19.2-7.2z"/>
+                      <path d="M-24-28.8c0 16.8 15.6 38.4 26.4 48 10.8 9.6 31.2 19.2 31.2 19.2s-25.2-21.6-36-38.4C-12.6-16.8-12-44.4-24-28.8z"/>
+                    </g>
+                  </svg>
+                </div>
+              )}
             </button>
             
             {/* User Profile */}

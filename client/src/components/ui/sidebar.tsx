@@ -16,6 +16,8 @@ interface SidebarProps {
 }
 
 export function Sidebar({ isOpen = true }: SidebarProps) {
+  // Define a compact width for icons-only mode
+  const sidebarWidth = isOpen ? 'w-[200px]' : 'w-[70px]';
   const [location] = useLocation();
 
   const navigationItems: NavigationItem[] = [
@@ -72,7 +74,7 @@ export function Sidebar({ isOpen = true }: SidebarProps) {
 
   return (
     <div
-      className={`${isOpen ? 'w-[200px]' : 'w-0'} flex-shrink-0 flex flex-col h-full relative transition-all duration-300`}
+      className={`${sidebarWidth} flex-shrink-0 flex flex-col h-full relative transition-all duration-300 overflow-hidden`}
       style={{
         background: [
           "linear-gradient(to right, #040223 0%, #040223 75%, #060E40 100%)",
@@ -84,9 +86,35 @@ export function Sidebar({ isOpen = true }: SidebarProps) {
         borderImage: "linear-gradient(to bottom, #490791, #0B1B69) 1"
       }}
     >
-      {/* Logo */}
-      <div className={`pt-8 pb-6 px-6 flex items-center ${!isOpen ? 'opacity-0 overflow-hidden' : 'opacity-100'} transition-opacity duration-300`}>
-        <div className="flex items-center gap-2">
+      {/* Logo - Full Version */}
+      {isOpen && (
+        <div className="pt-8 pb-6 px-6 flex items-center transition-opacity duration-300">
+          <div className="flex items-center gap-2">
+            <div className="gradient-bg-purple rounded-md p-1.5 w-9 h-9 flex items-center justify-center shadow-lg">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6 text-white"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+            </div>
+            <span className="text-xl font-bold text-white tracking-tight">
+              Cliniva
+            </span>
+          </div>
+        </div>
+      )}
+      
+      {/* Logo - Icon Only Version */}
+      {!isOpen && (
+        <div className="pt-8 pb-6 flex justify-center items-center transition-opacity duration-300">
           <div className="gradient-bg-purple rounded-md p-1.5 w-9 h-9 flex items-center justify-center shadow-lg">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -102,11 +130,8 @@ export function Sidebar({ isOpen = true }: SidebarProps) {
               <line x1="5" y1="12" x2="19" y2="12" />
             </svg>
           </div>
-          <span className="text-xl font-bold text-white tracking-tight">
-            Cliniva
-          </span>
         </div>
-      </div>
+      )}
 
       {/* User Profile */}
       <div className={`px-6 py-4 flex flex-col items-center mb-8 ${!isOpen ? 'opacity-0 overflow-hidden' : 'opacity-100'} transition-opacity duration-300`}>
@@ -121,57 +146,100 @@ export function Sidebar({ isOpen = true }: SidebarProps) {
         <p className="text-sm text-[#94A3B8]/80">Admin</p>
       </div>
 
-      {/* Navigation */}
-      <div className={`flex-1 flex flex-col gap-2 px-5 ${!isOpen ? 'opacity-0 overflow-hidden' : 'opacity-100'} transition-opacity duration-300`}>
-        {navigationItems.map((item) => (
-          <Link key={item.name} href={item.path}>
-            <span
-              className={cn(
-                "py-3.5 px-4 flex items-center gap-3.5 hover:bg-[#5D0A72]/20 rounded-xl transition cursor-pointer",
-                location === item.path ? "active-nav" : "",
-              )}
-            >
-              <span
-                className={
-                  location === item.path
-                    ? "text-[#5D0A72]"
-                    : "text-[#31A8FF]  bg-clip-text text-transparent"
-                }
-              >
-                {item.icon}
-              </span>
+      {/* Navigation - Full Version */}
+      {isOpen && (
+        <div className="flex-1 flex flex-col gap-2 px-5 transition-opacity duration-300">
+          {navigationItems.map((item) => (
+            <Link key={item.name} href={item.path}>
               <span
                 className={cn(
-                  "font-medium text-sm",
-                  location === item.path
-                    ? "text-[#5D0A72]"
-                    : "text-[#FDFEFB]",
+                  "py-3.5 px-4 flex items-center gap-3.5 hover:bg-[#5D0A72]/20 rounded-xl transition cursor-pointer",
+                  location === item.path ? "active-nav" : "",
                 )}
               >
-                {item.name}
+                <span
+                  className={
+                    location === item.path
+                      ? "text-[#5D0A72]"
+                      : "text-[#31A8FF] bg-clip-text text-transparent"
+                  }
+                >
+                  {item.icon}
+                </span>
+                <span
+                  className={cn(
+                    "font-medium text-sm",
+                    location === item.path
+                      ? "text-[#5D0A72]"
+                      : "text-[#FDFEFB]",
+                  )}
+                >
+                  {item.name}
+                </span>
               </span>
+            </Link>
+          ))}
+  
+          <div className="mt-auto mb-8 py-3.5 px-4 flex items-center gap-3 hover:bg-[#5D0A72]/20 rounded-xl transition cursor-pointer">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5 text-[#94A3B8]/80"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
+            <span className="font-medium text-sm text-[#94A3B8]/80">
+              Dark Mode
             </span>
-          </Link>
-        ))}
-
-        <div className="mt-auto mb-8 py-3.5 px-4 flex items-center gap-3 hover:bg-[#5D0A72]/20 rounded-xl transition cursor-pointer">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5 text-[#94A3B8]/80"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-          </svg>
-          <span className="font-medium text-sm text-[#94A3B8]/80">
-            Dark Mode
-          </span>
+          </div>
         </div>
-      </div>
+      )}
+      
+      {/* Navigation - Icons Only Version */}
+      {!isOpen && (
+        <div className="flex-1 flex flex-col gap-4 items-center pt-8 transition-opacity duration-300">
+          {navigationItems.map((item) => (
+            <Link key={item.name} href={item.path}>
+              <span
+                className={cn(
+                  "w-12 h-12 flex items-center justify-center hover:bg-[#5D0A72]/20 rounded-xl transition cursor-pointer",
+                  location === item.path ? "active-nav-icon" : "",
+                )}
+              >
+                <span
+                  className={
+                    location === item.path
+                      ? "text-[#5D0A72]"
+                      : "text-[#31A8FF] bg-clip-text text-transparent"
+                  }
+                >
+                  {item.icon}
+                </span>
+              </span>
+            </Link>
+          ))}
+  
+          <div className="mt-auto mb-8 w-12 h-12 flex items-center justify-center hover:bg-[#5D0A72]/20 rounded-xl transition cursor-pointer">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5 text-[#94A3B8]/80"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
