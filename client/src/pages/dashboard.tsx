@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Sidebar } from "@/components/ui/sidebar";
 import { DashboardCard } from "@/components/ui/dashboard-card";
 import { HospitalSurveyChart } from "@/components/ui/dashboard-chart";
@@ -6,13 +7,16 @@ import { hospitalSurveyData, barChartData } from "@/lib/dashboardData";
 import { ChartGradients } from "@/lib/chart-gradients";
 
 export default function Dashboard() {
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [language, setLanguage] = useState<'en' | 'ar'>('en');
+  
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Add SVG gradients for charts */}
       <ChartGradients />
       
       {/* Sidebar */}
-      <Sidebar />
+      <Sidebar isOpen={sidebarOpen} />
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-y-auto bg-[#040223] gradient-bg-background">
