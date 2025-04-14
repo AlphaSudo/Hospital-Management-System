@@ -22,8 +22,20 @@ export default function Dashboard() {
       <div className="flex-1 flex flex-col overflow-y-auto bg-[#040223] gradient-bg-background">
         {/* Header */}
         <header className="h-24 px-8 flex items-center justify-between border-b border-[#5D0A72]/10">
-          {/* Header Title with icon */}
+          {/* Header Title with icon and sidebar toggle */}
           <div className="flex items-center gap-3">
+            {/* Sidebar toggle button */}
+            <button 
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="w-10 h-10 flex items-center justify-center bg-[#05002E] rounded-lg shadow-md transition-all hover:bg-[#0A004A]/20"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-[#94A3B8]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="3" y1="12" x2="21" y2="12" />
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <line x1="3" y1="18" x2="21" y2="18" />
+              </svg>
+            </button>
+            
             <div className="w-10 h-10 flex items-center justify-center bg-[#05002E] rounded-lg shadow-md">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-[#94A3B8]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <rect x="3" y="3" width="7" height="7" />
@@ -51,6 +63,26 @@ export default function Dashboard() {
               />
             </div>
             
+            {/* Full Screen Button */}
+            <button
+              onClick={() => {
+                if (!document.fullscreenElement) {
+                  document.documentElement.requestFullscreen();
+                } else if (document.exitFullscreen) {
+                  document.exitFullscreen();
+                }
+              }}
+              className="w-11 h-11 flex items-center justify-center rounded-full bg-[#05002E] border border-[#5D0A72]/10 shadow-md hover:bg-[#0A004A]/20 transition-colors"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-[#94A3B8]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="15 3 21 3 21 9" />
+                <polyline points="9 21 3 21 3 15" />
+                <line x1="21" y1="3" x2="14" y2="10" />
+                <line x1="3" y1="21" x2="10" y2="14" />
+              </svg>
+            </button>
+            
+            {/* Notification Button */}
             <div className="w-11 h-11 flex items-center justify-center rounded-full bg-[#05002E] border border-[#5D0A72]/10 shadow-md">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-[#94A3B8]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
@@ -58,6 +90,17 @@ export default function Dashboard() {
               </svg>
             </div>
             
+            {/* Language Selector */}
+            <button
+              onClick={() => setLanguage(language === 'en' ? 'ar' : 'en')}
+              className="w-11 h-11 flex items-center justify-center rounded-full bg-[#05002E] border border-[#5D0A72]/10 shadow-md hover:bg-[#0A004A]/20 transition-colors"
+            >
+              <div className="flex items-center justify-center">
+                <span className="text-[#94A3B8] font-medium text-sm">{language === 'en' ? 'EN' : 'AR'}</span>
+              </div>
+            </button>
+            
+            {/* User Profile */}
             <div className="w-11 h-11 rounded-full overflow-hidden border-2 border-[#5D0A72]/20 shadow-xl">
               <img 
                 src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&h=200&auto=format&fit=crop" 
