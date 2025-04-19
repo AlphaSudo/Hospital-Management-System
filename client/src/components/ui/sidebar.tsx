@@ -5,6 +5,7 @@ import  DoctorWhiteCoatIcon  from '../icons/DoctorWhiteCoatIcon.tsx';
 import DepartmentIcon from '../icons/DepartmentIcon.tsx';
 import AppointmentsIcon from '../icons/AppointmentIcon.tsx';
 import ReportIcon from '../icons/ReportIcon.tsx';
+import ChartIcon from '../icons/ChartIcon.tsx';
 interface NavigationItem {
   name: string;
   path: string;
@@ -17,7 +18,7 @@ interface SidebarProps {
 
 export function Sidebar({ isOpen = true }: SidebarProps) {
   // Define a compact width for icons-only mode
-  const sidebarWidth = isOpen ? 'w-[200px]' : 'w-[70px]';
+  const sidebarWidth = isOpen ? 'w-[250px]' : 'w-[70px]';
   const [location] = useLocation();
 
   const navigationItems: NavigationItem[] = [
@@ -25,21 +26,7 @@ export function Sidebar({ isOpen = true }: SidebarProps) {
       name: "Dashboard",
       path: "/",
       icon: (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-5 w-5"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <rect x="3" y="3" width="7" height="7" />
-          <rect x="14" y="3" width="7" height="7" />
-          <rect x="14" y="14" width="7" height="7" />
-          <rect x="3" y="14" width="7" height="7" />
-        </svg>
+       <ChartIcon/>
       ),
     },
     {
@@ -160,7 +147,7 @@ export function Sidebar({ isOpen = true }: SidebarProps) {
                 <span
                   className={
                     location === item.path
-                      ? "text-[#5D0A72]"
+                      ? "text-[#FF8AFF]"
                       : "text-[#31A8FF] bg-clip-text text-transparent"
                   }
                 >
@@ -170,7 +157,7 @@ export function Sidebar({ isOpen = true }: SidebarProps) {
                   className={cn(
                     "font-medium text-sm",
                     location === item.path
-                      ? "text-[#5D0A72]"
+                      ? "text-[#FF8AFF]"
                       : "text-[#FDFEFB]",
                   )}
                 >
