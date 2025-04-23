@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Sidebar } from "@/components/ui/sidebar";
 import { ChartGradients } from "@/lib/chart-gradients";
 import { cn } from "@/lib/utils";
@@ -152,11 +152,55 @@ const sampleAppointments: Appointment[] = [
   }
 ];
 
+// Column interface for visibility toggle
+interface ColumnToggle {
+  id: string;
+  label: string;
+  visible: boolean;
+}
+
 export default function AppointmentsPage() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [language, setLanguage] = useState<'en' | 'ar'>('en');
   const [selectedAppointments, setSelectedAppointments] = useState<number[]>([]);
   const [selectAll, setSelectAll] = useState(false);
+  const [showColumnSelector, setShowColumnSelector] = useState(false);
+  const columnSelectorRef = useRef<HTMLDivElement>(null);
+  
+  // Column visibility state
+  const [columns, setColumns] = useState<ColumnToggle[]>([
+    { id: 'name', label: 'Name', visible: true },
+    { id: 'doctor', label: 'Doctor', visible: true },
+    { id: 'gender', label: 'Gender', visible: true },
+    { id: 'date', label: 'Date', visible: true },
+    { id: 'time', label: 'Time', visible: true },
+    { id: 'mobile', label: 'Mobile', visible: true },
+    { id: 'injury', label: 'Injury', visible: true },
+    { id: 'email', label: 'Email', visible: true },
+    { id: 'status', label: 'Appointment Status', visible: true },
+    { id: 'visitType', label: 'Visit Type', visible: true },
+  ]);
+  
+  // Handle clicking outside to close column selector
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (columnSelectorRef.current && !columnSelectorRef.current.contains(event.target as Node)) {
+        setShowColumnSelector(false);
+      }
+    }
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+  
+  // Toggle column visibility
+  const toggleColumnVisibility = (columnId: string) => {
+    setColumns(columns.map(column => 
+      column.id === columnId ? { ...column, visible: !column.visible } : column
+    ));
+  };
   
   // Handle select all appointments
   const handleSelectAll = () => {
@@ -345,9 +389,24 @@ export default function AppointmentsPage() {
           </div>
 
           {/* Appointments Table Card */}
-          <div className="bg-[#05002E] rounded-xl overflow-hidden shadow-lg border border-[#5D0A72]/10">
+          <div
+            style={{
+              padding: '2px',
+              borderRadius: '1rem', // Equivalent to rounded-2xl
+              background: 'conic-gradient(#072f93 0deg, #03115e 45deg, #031b78 90deg, #0f42c1 135deg, #021a70 180deg, #031a63 225deg, #0a70d2 270deg, #0e82ea 315deg, #072f93 360deg)',
+              display: 'grid',
+              boxShadow: `
+                0 4px 8px rgba(7, 47, 147, 0.3),         /* Outer shadow - subtle blue glow */
+                0 0 12px rgba(14, 130, 234, 0.4),         /* Outer glow - more intense */
+             
+              `
+            }}
+          >
+          <div className="bg-[#05002E] rounded-xl overflow-hidden shadow-lg " style={{boxShadow:`inset 0 2px 4px rgba(3, 17, 94, 0.6),     /* Inset shadow - top */
+            inset 0 -2px 6px rgba(2, 26, 112, 0.8)    /* Inset shadow - bottom */`}}>
             {/* Table Header */}
-            <div className="p-5 flex items-center justify-between border-b border-[#5D0A72]/10">
+           
+            <div className="p-5 flex items-center justify-between border-b border-[#5D0A72]/10  " >
               <div className="flex items-center gap-2">
                 <div className="relative w-64">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -366,35 +425,101 @@ export default function AppointmentsPage() {
 
               {/* Table Actions */}
               <div className="flex items-center gap-2">
-                <button className="bg-[#05002E] text-[#94A3B8] p-2 rounded-lg hover:bg-[#0A004A]/20 transition-colors border border-[#5D0A72]/10">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="21" y1="10" x2="3" y2="10" />
-                    <line x1="21" y1="6" x2="3" y2="6" />
-                    <line x1="21" y1="14" x2="3" y2="14" />
-                    <line x1="21" y1="18" x2="3" y2="18" />
+                <div className="relative parent-container">
+                  <button 
+                    onClick={() => setShowColumnSelector(!showColumnSelector)}
+                    className="relative bg-[#05002E] text-[#94A3B8] p-2 rounded-lg hover:bg-[#0A004A]/20 transition-colors border border-[#5D0A72]/10 group"
+                  >
+                     <span className="absolute invisible group-hover:visible bg-[#3466ad] text-white text-xs px-2 py-1 rounded-lg -bottom-full left-1/2 transform -translate-x-1/2 z-50">
+                      Show/Hide Columns
+                    </span>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                      <path fillRule="evenodd" clipRule="evenodd" d="M3 7C3 6.44772 3.44772 6 4 6H20C20.5523 6 21 6.44772 21 7C21 7.55228 20.5523 8 20 8H4C3.44772 8 3 7.5523 3 7ZM6 12C6 11.4477 6.44772 11 7 11H17C17.5523 11 18 11.4477 18 12C18 12.5523 17.5523 13 17 13H7C6.44772 13 6 12.5523 6 12ZM9 17C9 16.4477 9.44772 16 10 16H14C14.5523 16 15 16.4477 15 17C15 17.5523 14.5523 18 14 18H10C9.44772 18 9 17.5523 9 17Z"
+                            fill="currentColor" />
+                    </svg>
+                  </button>
+                  
+                  {/* Column Selector Popup */}
+                  {showColumnSelector && (
+                    <div 
+                      ref={columnSelectorRef}
+                      className="absolute top-12 right-0 z-30 w-64 bg-[#f2f2f4] rounded-lg shadow-lg border border-[#5D0A72]/10 overflow-hidden"
+                      style={{ maxHeight: '400px', overflowY: 'auto' }}
+                    >
+                      <div className="sticky top-0 bg-[#e9eaec] p-3 border-b border-gray-300">
+                        <h3 className="text-gray-700 font-medium text-base">Show/Hide Column</h3>
+                      </div>
+                      <div className="overflow-y-auto">
+                        {columns.map((column) => (
+                          <div
+                            key={column.id}
+                            className="flex items-center px-4 py-3 hover:bg-gray-100 border-b border-gray-200"
+                          >
+                            <input
+                              type="checkbox"
+                              id={`column-${column.id}`}
+                              checked={column.visible}
+                              onChange={() => toggleColumnVisibility(column.id)}
+                              className="w-5 h-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                            />
+                            <label
+                              htmlFor={`column-${column.id}`}
+                              className="ml-3 text-sm text-gray-700 cursor-pointer"
+                            >
+                              {column.label}
+                            </label>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <button className="relative bg-[#05002E] text-[#94A3B8] p-2 rounded-lg hover:bg-[#0A004A]/20 transition-colors border border-[#5D0A72]/10 group">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5" />
+                    <path d="M15 12L12 12M12 12L9 12M12 12L12 9M12 12L12 15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                   </svg>
+                  <span className="absolute invisible group-hover:visible bg-[#3466ad] text-white text-xs px-2 py-1 rounded-lg -bottom-full left-1/2 transform -translate-x-1/2 z-50">
+                    Add
+                  </span>
                 </button>
-                <button className="bg-[#05002E] text-[#94A3B8] p-2 rounded-lg hover:bg-[#0A004A]/20 transition-colors border border-[#5D0A72]/10">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="16 18 22 12 16 6" />
-                    <polyline points="8 6 2 12 8 18" />
+
+                <button className="relative bg-[#05002E] text-[#94A3B8] p-2 rounded-lg hover:bg-[#0A004A]/20 transition-colors border border-[#5D0A72]/10 group">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M21 3V8M21 8H16M21 8L18 5.29168C16.4077 3.86656 14.3051 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21C16.2832 21 19.8675 18.008 20.777 14"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
                   </svg>
+                  <span className="absolute invisible group-hover:visible bg-[#3466ad] text-white text-xs px-2 py-1 rounded-lg -bottom-full left-1/2 transform -translate-x-1/2 z-50">
+                    Refresh
+                  </span>
                 </button>
-                <button className="bg-[#05002E] text-[#94A3B8] p-2 rounded-lg hover:bg-[#0A004A]/20 transition-colors border border-[#5D0A72]/10">
+
+                <button className="relative bg-[#05002E] text-[#94A3B8] p-2 rounded-lg hover:bg-[#0A004A]/20 transition-colors border border-[#5D0A72]/10 group">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M3 15v4c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2v-4M17 9l-5 5-5-5M12 12.8V2.5" />
                   </svg>
+                  <span className="absolute invisible group-hover:visible bg-[#3466ad] text-white text-xs px-2 py-1 rounded-lg -bottom-full left-1/2 transform -translate-x-1/2 z-50">
+                    Xlsx Download
+                  </span>
                 </button>
               </div>
             </div>
 
             {/* Table */}
-            <div className="overflow-x-auto">
-              <table className="w-full">
+            <div className="overflow-x-auto p-4 bg-[#05002E] ">
+     {/* //#03001c          */}
+
+              <table className="w-full   bg-[#05002E] ">
                 <thead>
-                  <tr className="text-left text-[#94A3B8] bg-[#02001E]/50">
-                    <th className="py-4 px-6 font-medium">
-                      <div className="flex items-center">
+                  <tr className="text-left text-[#94A3B8]   bg-[#03001c] ">
+                    <th className="py-4 px-6 font-medium rounded-l-lg">
+                      <div className="flex items-center ">
                         <input
                           type="checkbox"
                           checked={selectAll}
@@ -403,27 +528,46 @@ export default function AppointmentsPage() {
                         />
                       </div>
                     </th>
-                    <th className="py-4 px-6 font-medium">Name</th>
-                    <th className="py-4 px-6 font-medium">Doctor</th>
-                    <th className="py-4 px-6 font-medium">Gender</th>
-                    <th className="py-4 px-6 font-medium">Date</th>
-                    <th className="py-4 px-6 font-medium">Time</th>
-                    <th className="py-4 px-6 font-medium">Mobile</th>
-                    <th className="py-4 px-6 font-medium">Injury</th>
-                    <th className="py-4 px-6 font-medium">Email</th>
-                    <th className="py-4 px-6 font-medium">
-                      Appointment <br />Status
-                    </th>
-                    <th className="py-4 px-6 font-medium">Visit Type</th>
-                    <th className="py-4 px-6 font-medium">Actions</th>
+                    {columns.find(c => c.id === 'name')?.visible && (
+                      <th className="py-4 px-6 font-medium">Name</th>
+                    )}
+                    {columns.find(c => c.id === 'doctor')?.visible && (
+                      <th className="py-4 px-6 font-medium">Doctor</th>
+                    )}
+                    {columns.find(c => c.id === 'gender')?.visible && (
+                      <th className="py-4 px-6 font-medium">Gender</th>
+                    )}
+                    {columns.find(c => c.id === 'date')?.visible && (
+                      <th className="py-4 px-6 font-medium">Date</th>
+                    )}
+                    {columns.find(c => c.id === 'time')?.visible && (
+                      <th className="py-4 px-6 font-medium">Time</th>
+                    )}
+                    {columns.find(c => c.id === 'mobile')?.visible && (
+                      <th className="py-4 px-6 font-medium">Mobile</th>
+                    )}
+                    {columns.find(c => c.id === 'injury')?.visible && (
+                      <th className="py-4 px-6 font-medium">Injury</th>
+                    )}
+                    {columns.find(c => c.id === 'email')?.visible && (
+                      <th className="py-4 px-6 font-medium">Email</th>
+                    )}
+                    {columns.find(c => c.id === 'status')?.visible && (
+                      <th className="py-4 px-6 font-medium">
+                        Appointment <br />Status
+                      </th>
+                    )}
+                    {columns.find(c => c.id === 'visitType')?.visible && (
+                      <th className="py-4 px-6 font-medium">Visit Type</th>
+                    )}
+                    <th className="py-4 px-6 font-medium rounded-r-lg">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#5D0A72]/10">
                   {sampleAppointments.map((appointment) => (
                     <tr 
                       key={appointment.id} 
-                      className="text-[#94A3B8] hover:bg-[#02001E]/30 transition-colors"
-                    >
+                      className="text-[#94A3B8] hover:bg-[#02001e]/30 transition-colors even:bg-[#000041] " >
                       <td className="py-4 px-6">
                         <input
                           type="checkbox"
@@ -432,58 +576,78 @@ export default function AppointmentsPage() {
                           className="rounded border-[#5D0A72]/30 text-[#5D0A72] focus:ring-[#5D0A72]/30 h-4 w-4"
                         />
                       </td>
-                      <td className="py-4 px-6">
-                        <div className="flex items-center gap-3">
-                          <div className={`w-10 h-10 rounded-full flex items-center justify-center ${getAvatarBg(appointment.gender)}`}>
-                            <span className="text-sm font-medium">
-                              {appointment.patientName.split(' ').map(n => n[0]).join('')}
-                            </span>
+                      {columns.find(c => c.id === 'name')?.visible && (
+                        <td className="py-4 px-6">
+                          <div className="flex items-center gap-3">
+                            <div className={`w-10 h-10 rounded-full flex items-center justify-center ${getAvatarBg(appointment.gender)}`}>
+                              <span className="text-sm font-medium">
+                                {appointment.patientName.split(' ').map(n => n[0]).join('')}
+                              </span>
+                            </div>
+                            <span>{appointment.patientName}</span>
                           </div>
-                          <span>{appointment.patientName}</span>
-                        </div>
-                      </td>
-                      <td className="py-4 px-6">{appointment.doctor}</td>
-                      <td className="py-4 px-6">
-                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                          appointment.gender === 'female' ? 'bg-pink-100 text-pink-800' : 'bg-blue-100 text-blue-800'
-                        }`}>
-                          {appointment.gender}
-                        </span>
-                      </td>
-                      <td className="py-4 px-6">{appointment.date}</td>
-                      <td className="py-4 px-6">
-                        <div className="flex items-center">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 text-[#94A3B8]/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <circle cx="12" cy="12" r="10" />
-                            <polyline points="12 6 12 12 16 14" />
-                          </svg>
-                          {appointment.time}
-                        </div>
-                      </td>
-                      <td className="py-4 px-6">
-                        <div className="flex items-center">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 text-[#94A3B8]/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-                          </svg>
-                          {appointment.phone}
-                        </div>
-                      </td>
-                      <td className="py-4 px-6">{appointment.issue}</td>
-                      <td className="py-4 px-6">
-                        <div className="flex items-center">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 text-[#94A3B8]/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                            <polyline points="22,6 12,13 2,6" />
-                          </svg>
-                          {appointment.email}
-                        </div>
-                      </td>
-                      <td className="py-4 px-6">
-                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(appointment.status)}`}>
-                          {appointment.status}
-                        </span>
-                      </td>
-                      <td className="py-4 px-6">{appointment.visitType}</td>
+                        </td>
+                      )}
+                      {columns.find(c => c.id === 'doctor')?.visible && (
+                        <td className="py-4 px-6">{appointment.doctor}</td>
+                      )}
+                      {columns.find(c => c.id === 'gender')?.visible && (
+                        <td className="py-4 px-6">
+                          <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                            appointment.gender === 'female' ? 'bg-pink-100 text-pink-800' : 'bg-blue-100 text-blue-800'
+                          }`}>
+                            {appointment.gender}
+                          </span>
+                        </td>
+                      )}
+                      {columns.find(c => c.id === 'date')?.visible && (
+                        <td className="py-4 px-6">{appointment.date}</td>
+                      )}
+                      {columns.find(c => c.id === 'time')?.visible && (
+                        <td className="py-4 px-6">
+                          <div className="flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 text-[#94A3B8]/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <circle cx="12" cy="12" r="10" />
+                              <polyline points="12 6 12 12 16 14" />
+                            </svg>
+                            {appointment.time}
+                          </div>
+                        </td>
+                      )}
+                      {columns.find(c => c.id === 'mobile')?.visible && (
+                        <td className="py-4 px-6">
+                          <div className="flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 text-[#94A3B8]/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                            </svg>
+                            {appointment.phone}
+                          </div>
+                        </td>
+                      )}
+                      {columns.find(c => c.id === 'injury')?.visible && (
+                        <td className="py-4 px-6">{appointment.issue}</td>
+                      )}
+                      {columns.find(c => c.id === 'email')?.visible && (
+                        <td className="py-4 px-6">
+                          <div className="flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 text-[#94A3B8]/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                              <polyline points="22,6 12,13 2,6" />
+                            </svg>
+                            {appointment.email}
+                          </div>
+                        </td>
+                      )}
+                      {columns.find(c => c.id === 'status')?.visible && (
+                        <td className="py-4 px-6">
+                          <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(appointment.status)}`}>
+                            {appointment.status}
+                          </span>
+                        </td>
+                      )}
+                      {columns.find(c => c.id === 'visitType')?.visible && (
+                        <td className="py-4 px-6">{appointment.visitType}</td>
+                      )}
                       <td className="py-4 px-6">
                         <div className="flex items-center gap-2">
                           <button className="text-blue-500 hover:text-blue-700">
@@ -504,7 +668,11 @@ export default function AppointmentsPage() {
                   ))}
                 </tbody>
               </table>
+              
             </div>
+          </div>
+            
+              </div>
 
             {/* Pagination */}
             <div className="p-4 flex items-center justify-between border-t border-[#5D0A72]/10">
@@ -532,7 +700,7 @@ export default function AppointmentsPage() {
                 </button>
               </div>
             </div>
-          </div>
+          
         </div>
       </div>
     </div>
