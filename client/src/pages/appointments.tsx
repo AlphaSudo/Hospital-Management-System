@@ -880,22 +880,75 @@ export default function AppointmentsPage() {
             <div className="p-4 flex items-center justify-between border-t border-[#5D0A72]/10">
               <div className="text-sm text-[#94A3B8]">
                 Items per page: 
-                <select className="ml-2 bg-[#02001E] border border-[#5D0A72]/20 rounded px-2 py-1 text-[#94A3B8]">
-                  <option>10</option>
-                  <option>20</option>
-                  <option>50</option>
+                <select 
+                  className="ml-2 bg-[#02001E] border border-[#5D0A72]/20 rounded px-2 py-1 text-[#94A3B8]"
+                  value={itemsPerPage}
+                  onChange={handleItemsPerPageChange}
+                >
+                  <option value="5">5</option>
+                  <option value="10">10</option>
+                  <option value="20">20</option>
+                  <option value="50">50</option>
                 </select>
               </div>
               <div className="text-sm text-[#94A3B8]">
-                1-10 of 80
+                {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, sortedAppointments.length)} of {sortedAppointments.length}
               </div>
               <div className="flex items-center gap-2">
-                <button className="p-1 rounded-md border border-[#5D0A72]/20 text-[#94A3B8] hover:bg-[#5D0A72]/10">
+                <button 
+                  className={`p-1 rounded-md border border-[#5D0A72]/20 ${
+                    currentPage === 1 
+                      ? 'text-[#94A3B8]/30 cursor-not-allowed' 
+                      : 'text-[#94A3B8] hover:bg-[#5D0A72]/10 cursor-pointer'
+                  }`}
+                  onClick={() => currentPage > 1 && handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="15 18 9 12 15 6" />
                   </svg>
                 </button>
-                <button className="p-1 rounded-md border border-[#5D0A72]/20 text-[#94A3B8] hover:bg-[#5D0A72]/10">
+                
+                {/* Page numbers */}
+                <div className="flex items-center">
+                  {Array.from({ length: Math.min(totalPages, 3) }).map((_, index) => {
+                    // Show current page and 1 page before/after when possible
+                    let pageNum;
+                    if (totalPages <= 3) {
+                      pageNum = index + 1;
+                    } else if (currentPage <= 2) {
+                      pageNum = index + 1;
+                    } else if (currentPage >= totalPages - 1) {
+                      pageNum = totalPages - 2 + index;
+                    } else {
+                      pageNum = currentPage - 1 + index;
+                    }
+                    
+                    return (
+                      <button
+                        key={pageNum}
+                        onClick={() => handlePageChange(pageNum)}
+                        className={`w-8 h-8 mx-1 rounded-md flex items-center justify-center ${
+                          currentPage === pageNum
+                            ? 'bg-[#5D0A72]/30 text-white'
+                            : 'text-[#94A3B8] hover:bg-[#5D0A72]/10'
+                        }`}
+                      >
+                        {pageNum}
+                      </button>
+                    );
+                  })}
+                </div>
+                
+                <button 
+                  className={`p-1 rounded-md border border-[#5D0A72]/20 ${
+                    currentPage === totalPages 
+                      ? 'text-[#94A3B8]/30 cursor-not-allowed' 
+                      : 'text-[#94A3B8] hover:bg-[#5D0A72]/10 cursor-pointer'
+                  }`}
+                  onClick={() => currentPage < totalPages && handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="9 18 15 12 9 6" />
                   </svg>
