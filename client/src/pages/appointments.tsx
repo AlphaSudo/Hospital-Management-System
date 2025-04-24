@@ -159,6 +159,10 @@ interface ColumnToggle {
   visible: boolean;
 }
 
+// Sorting types
+type SortOrder = 'asc' | 'desc' | null;
+type SortableColumn = 'id' | 'patientName' | 'doctor' | 'date' | 'time' | 'status' | 'visitType';
+
 export default function AppointmentsPage() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [language, setLanguage] = useState<'en' | 'ar'>('en');
@@ -166,6 +170,14 @@ export default function AppointmentsPage() {
   const [selectAll, setSelectAll] = useState(false);
   const [showColumnSelector, setShowColumnSelector] = useState(false);
   const columnSelectorRef = useRef<HTMLDivElement>(null);
+  
+  // Sorting state
+  const [sortColumn, setSortColumn] = useState<SortableColumn>('id');
+  const [sortOrder, setSortOrder] = useState<SortOrder>('asc');
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
   
   // Column visibility state
   const [columns, setColumns] = useState<ColumnToggle[]>([
@@ -239,6 +251,78 @@ export default function AppointmentsPage() {
   const getAvatarBg = (gender: string) => {
     return gender === "female" ? "bg-pink-200" : "bg-blue-200";
   };
+  
+  // Handle sorting column click
+  const handleSortClick = (column: SortableColumn) => {
+    if (sortColumn === column) {
+      // If already sorting by this column, cycle through states: asc -> desc -> null
+      if (sortOrder === 'asc') {
+        setSortOrder('desc');
+      } else if (sortOrder === 'desc') {
+        setSortOrder(null);
+        setSortColumn('id'); // Reset to default sorting
+      }
+    } else {
+      // New column sort, start with ascending
+      setSortColumn(column);
+      setSortOrder('asc');
+    }
+  };
+  
+  // Handle page change
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+  };
+  
+  // Handle items per page change
+  const handleItemsPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setItemsPerPage(Number(e.target.value));
+    setCurrentPage(1); // Reset to first page when changing items per page
+  };
+  
+  // Sort appointments
+  const sortedAppointments = [...sampleAppointments].sort((a, b) => {
+    if (sortOrder === null) {
+      return a.id - b.id; // Default sort by ID
+    }
+    
+    const sortMultiplier = sortOrder === 'asc' ? 1 : -1;
+    
+    switch (sortColumn) {
+      case 'id':
+        return sortMultiplier * (a.id - b.id);
+      case 'patientName':
+        return sortMultiplier * a.patientName.localeCompare(b.patientName);
+      case 'doctor':
+        return sortMultiplier * a.doctor.localeCompare(b.doctor);
+      case 'date': {
+        // Convert dates for proper comparison (MM/DD/YYYY format)
+        const dateA = new Date(a.date).getTime();
+        const dateB = new Date(b.date).getTime();
+        return sortMultiplier * (dateA - dateB);
+      }
+      case 'time': {
+        // Convert times for comparison
+        const timeA = a.time.split(':').map(Number);
+        const timeB = b.time.split(':').map(Number);
+        const minutesA = timeA[0] * 60 + timeA[1];
+        const minutesB = timeB[0] * 60 + timeB[1];
+        return sortMultiplier * (minutesA - minutesB);
+      }
+      case 'status':
+        return sortMultiplier * a.status.localeCompare(b.status);
+      case 'visitType':
+        return sortMultiplier * a.visitType.localeCompare(b.visitType);
+      default:
+        return 0;
+    }
+  });
+  
+  // Paginate appointments
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentAppointments = sortedAppointments.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(sortedAppointments.length / itemsPerPage);
   
   return (
     <div className="flex h-screen overflow-hidden">
@@ -529,19 +613,99 @@ export default function AppointmentsPage() {
                       </div>
                     </th>
                     {columns.find(c => c.id === 'name')?.visible && (
-                      <th className="py-4 px-6 font-medium">Name</th>
+                      <th 
+                        className="py-4 px-6 font-medium hover:bg-[#05002E] cursor-pointer"
+                        onClick={() => handleSortClick('patientName')}
+                      >
+                        <div className="flex items-center gap-1">
+                          Name
+                          {sortColumn === 'patientName' && (
+                            <span>
+                              {sortOrder === 'asc' ? (
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                                  <path fillRule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clipRule="evenodd" />
+                                </svg>
+                              ) : (
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                                  <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                                </svg>
+                              )}
+                            </span>
+                          )}
+                        </div>
+                      </th>
                     )}
                     {columns.find(c => c.id === 'doctor')?.visible && (
-                      <th className="py-4 px-6 font-medium">Doctor</th>
+                      <th 
+                        className="py-4 px-6 font-medium hover:bg-[#05002E] cursor-pointer"
+                        onClick={() => handleSortClick('doctor')}
+                      >
+                        <div className="flex items-center gap-1">
+                          Doctor
+                          {sortColumn === 'doctor' && (
+                            <span>
+                              {sortOrder === 'asc' ? (
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                                  <path fillRule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clipRule="evenodd" />
+                                </svg>
+                              ) : (
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                                  <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                                </svg>
+                              )}
+                            </span>
+                          )}
+                        </div>
+                      </th>
                     )}
                     {columns.find(c => c.id === 'gender')?.visible && (
                       <th className="py-4 px-6 font-medium">Gender</th>
                     )}
                     {columns.find(c => c.id === 'date')?.visible && (
-                      <th className="py-4 px-6 font-medium">Date</th>
+                      <th 
+                        className="py-4 px-6 font-medium hover:bg-[#05002E] cursor-pointer"
+                        onClick={() => handleSortClick('date')}
+                      >
+                        <div className="flex items-center gap-1">
+                          Date
+                          {sortColumn === 'date' && (
+                            <span>
+                              {sortOrder === 'asc' ? (
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                                  <path fillRule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clipRule="evenodd" />
+                                </svg>
+                              ) : (
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                                  <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                                </svg>
+                              )}
+                            </span>
+                          )}
+                        </div>
+                      </th>
                     )}
                     {columns.find(c => c.id === 'time')?.visible && (
-                      <th className="py-4 px-6 font-medium">Time</th>
+                      <th 
+                        className="py-4 px-6 font-medium hover:bg-[#05002E] cursor-pointer"
+                        onClick={() => handleSortClick('time')}
+                      >
+                        <div className="flex items-center gap-1">
+                          Time
+                          {sortColumn === 'time' && (
+                            <span>
+                              {sortOrder === 'asc' ? (
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                                  <path fillRule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clipRule="evenodd" />
+                                </svg>
+                              ) : (
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                                  <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                                </svg>
+                              )}
+                            </span>
+                          )}
+                        </div>
+                      </th>
                     )}
                     {columns.find(c => c.id === 'mobile')?.visible && (
                       <th className="py-4 px-6 font-medium">Mobile</th>
@@ -553,18 +717,56 @@ export default function AppointmentsPage() {
                       <th className="py-4 px-6 font-medium">Email</th>
                     )}
                     {columns.find(c => c.id === 'status')?.visible && (
-                      <th className="py-4 px-6 font-medium">
-                        Appointment <br />Status
+                      <th 
+                        className="py-4 px-6 font-medium hover:bg-[#05002E] cursor-pointer"
+                        onClick={() => handleSortClick('status')}
+                      >
+                        <div className="flex items-center gap-1">
+                          Appointment <br />Status
+                          {sortColumn === 'status' && (
+                            <span>
+                              {sortOrder === 'asc' ? (
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                                  <path fillRule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clipRule="evenodd" />
+                                </svg>
+                              ) : (
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                                  <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                                </svg>
+                              )}
+                            </span>
+                          )}
+                        </div>
                       </th>
                     )}
                     {columns.find(c => c.id === 'visitType')?.visible && (
-                      <th className="py-4 px-6 font-medium">Visit Type</th>
+                      <th 
+                        className="py-4 px-6 font-medium hover:bg-[#05002E] cursor-pointer"
+                        onClick={() => handleSortClick('visitType')}
+                      >
+                        <div className="flex items-center gap-1">
+                          Visit Type
+                          {sortColumn === 'visitType' && (
+                            <span>
+                              {sortOrder === 'asc' ? (
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                                  <path fillRule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clipRule="evenodd" />
+                                </svg>
+                              ) : (
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                                  <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                                </svg>
+                              )}
+                            </span>
+                          )}
+                        </div>
+                      </th>
                     )}
                     <th className="py-4 px-6 font-medium rounded-r-lg">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#5D0A72]/10">
-                  {sampleAppointments.map((appointment) => (
+                  {currentAppointments.map((appointment) => (
                     <tr 
                       key={appointment.id} 
                       className="text-[#94A3B8] hover:bg-[#02001e]/30 transition-colors even:bg-[#000041] " >
