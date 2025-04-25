@@ -541,7 +541,7 @@ export default function AppointmentsPage() {
   };
 
   // Sort appointments
-  const sortedAppointments = [...sampleAppointments].sort((a, b) => {
+  const sortedAppointments = [...appointments].sort((a, b) => {
     if (sortOrder === null) {
       return a.id - b.id; // Default sort by ID
     }
