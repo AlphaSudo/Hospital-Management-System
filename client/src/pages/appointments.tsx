@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Sidebar } from "@/components/ui/sidebar";
 import { ChartGradients } from "@/lib/chart-gradients";
 import SortableHeader from "@/components/ui/SortableHeader";
+import { useToast } from "@/hooks/use-toast";
 // import { cn } from "@/lib/utils";
 
 // Define appointment data types
@@ -20,7 +21,7 @@ interface Appointment {
 }
 
 // Sample appointment data to match the screenshot
-const sampleAppointments: Appointment[] = [
+const initialAppointments: Appointment[] = [
   {
     id: 1,
     patientName: "Cara Stevens",
@@ -151,6 +152,136 @@ const sampleAppointments: Appointment[] = [
     status: "Cancelled",
     visitType: "New Patient",
   },
+  {
+    id: 11,
+    patientName: "Emily Davis",
+    doctor: "Dr.Ravi Kumar",
+    gender: "female",
+    date: "11/25/2024",
+    time: "10:00",
+    phone: "912345678",
+    issue: "Back Pain",
+    email: "emily.davis@example.com",
+    status: "Cancelled",
+    visitType: "Follow-Up",
+  },
+  {
+    id: 12,
+    patientName: "Liam Johnson",
+    doctor: "Dr.Anita Desai",
+    gender: "male",
+    date: "11/27/2024",
+    time: "14:15",
+    phone: "923456789",
+    issue: "Allergy",
+    email: "liam.johnson@example.com",
+    status: "Cancelled",
+    visitType: "New Patient",
+  },
+  {
+    id: 13,
+    patientName: "Olivia Wilson",
+    doctor: "Dr.Ajay Mehta",
+    gender: "female",
+    date: "11/30/2024",
+    time: "09:30",
+    phone: "934567890",
+    issue: "Migraine",
+    email: "olivia.wilson@example.com",
+    status: "Cancelled",
+    visitType: "Follow-Up",
+  },
+  {
+    id: 14,
+    patientName: "Noah Martinez",
+    doctor: "Dr.Nina Rao",
+    gender: "male",
+    date: "12/01/2024",
+    time: "16:00",
+    phone: "945678901",
+    issue: "Stomach Pain",
+    email: "noah.martinez@example.com",
+    status: "Cancelled",
+    visitType: "New Patient",
+  },
+  {
+    id: 15,
+    patientName: "Ava Anderson",
+    doctor: "Dr.Vikram Shah",
+    gender: "female",
+    date: "12/03/2024",
+    time: "11:45",
+    phone: "956789012",
+    issue: "Cold & Cough",
+    email: "ava.anderson@example.com",
+    status: "Cancelled",
+    visitType: "Follow-Up",
+  },
+  {
+    id: 16,
+    patientName: "James Thomas",
+    doctor: "Dr.Rekha Patel",
+    gender: "male",
+    date: "12/05/2024",
+    time: "13:30",
+    phone: "967890123",
+    issue: "Fever",
+    email: "james.thomas@example.com",
+    status: "Cancelled",
+    visitType: "New Patient",
+  },
+  {
+    id: 17,
+    patientName: "Isabella Moore",
+    doctor: "Dr.Arjun Roy",
+    gender: "female",
+    date: "12/07/2024",
+    time: "15:00",
+    phone: "978901234",
+    issue: "Headache",
+    email: "isabella.moore@example.com",
+    status: "Cancelled",
+    visitType: "Follow-Up",
+  },
+  {
+    id: 18,
+    patientName: "Benjamin Taylor",
+    doctor: "Dr.Swati Verma",
+    gender: "male",
+    date: "12/10/2024",
+    time: "10:45",
+    phone: "989012345",
+    issue: "Dizziness",
+    email: "benjamin.taylor@example.com",
+    status: "Cancelled",
+    visitType: "New Patient",
+  },
+  {
+    id: 19,
+    patientName: "Mia Harris",
+    doctor: "Dr.Rohan Nair",
+    gender: "female",
+    date: "12/12/2024",
+    time: "12:00",
+    phone: "990123456",
+    issue: "Knee Pain",
+    email: "mia.harris@example.com",
+    status: "Cancelled",
+    visitType: "Follow-Up",
+  },
+  {
+    id: 20,
+    patientName: "William Clark",
+    doctor: "Dr.Meera Kapoor",
+    gender: "male",
+    date: "12/15/2024",
+    time: "14:45",
+    phone: "901234567",
+    issue: "Chest Congestion",
+    email: "william.clark@example.com",
+    status: "Cancelled",
+    visitType: "New Patient",
+  }
 ];
 
 // Column interface for visibility toggle
@@ -174,9 +305,11 @@ export default function AppointmentsPage() {
   const [showColumnSelector, setShowColumnSelector] = useState(false);
   const columnSelectorRef = useRef<HTMLDivElement>(null);
 
+  // Appointment state
+  const [appointments, setAppointments] = useState<Appointment[]>(initialAppointments);
+  const { toast } = useToast();
+
   // Sorting state
-  // const [sortColumn, setSortColumn] = useState<SortableColumn>('id');
-  // const [sortOrder, setSortOrder] = useState<SortOrder>('asc');
   const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc" | null>(null);
 
@@ -198,11 +331,14 @@ export default function AppointmentsPage() {
   // Form dialog state
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
-  const [currentAppointment, setCurrentAppointment] = useState<Appointment | null>(null);
-  
+  const [currentAppointment, setCurrentAppointment] =
+    useState<Appointment | null>(null);
+
   // Delete confirmation dialog state
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [appointmentToDelete, setAppointmentToDelete] = useState<number | null>(null);
+  const [appointmentToDelete, setAppointmentToDelete] = useState<number | null>(
+    null,
+  );
 
   // Column visibility state
   const [columns, setColumns] = useState<ColumnToggle[]>([
@@ -252,7 +388,7 @@ export default function AppointmentsPage() {
       setSelectedAppointments([]);
     } else {
       setSelectedAppointments(
-        sampleAppointments.map((appointment) => appointment.id),
+        appointments.map((appointment) => appointment.id),
       );
     }
     setSelectAll(!selectAll);
@@ -289,21 +425,33 @@ export default function AppointmentsPage() {
   const handleFormSubmit = (appointmentData: Partial<Appointment>) => {
     if (isEditMode && currentAppointment) {
       // Edit existing appointment
-      const updatedAppointments = sampleAppointments.map(appointment => 
-        appointment.id === currentAppointment.id 
-          ? { ...appointment, ...appointmentData } 
+      const updatedAppointments = appointments.map((appointment) =>
+        appointment.id === currentAppointment.id
+          ? { ...appointment, ...appointmentData as Appointment }
           : appointment
       );
-      // In a real app, you'd update the backend here
-      console.log('Updated appointment:', updatedAppointments);
+      
+      setAppointments(updatedAppointments);
+      
+      toast({
+        title: "Appointment Updated",
+        description: `Appointment for ${appointmentData.patientName} has been successfully updated.`,
+        className: "bg-[#05002E] border border-[#5D0A72]/20 text-white",
+      });
     } else {
       // Add new appointment
       const newAppointment = {
-        id: Math.max(...sampleAppointments.map(a => a.id)) + 1,
-        ...appointmentData
+        id: Math.max(...appointments.map((a) => a.id)) + 1,
+        ...appointmentData,
       } as Appointment;
-      // In a real app, you'd call an API to add this appointment
-      console.log('New appointment:', newAppointment);
+      
+      setAppointments([...appointments, newAppointment]);
+      
+      toast({
+        title: "Appointment Created",
+        description: `New appointment for ${newAppointment.patientName} has been successfully created.`,
+        className: "bg-[#05002E] border border-[#5D0A72]/20 text-white",
+      });
     }
     setIsFormOpen(false);
   };
@@ -316,8 +464,23 @@ export default function AppointmentsPage() {
 
   const handleConfirmDelete = () => {
     if (appointmentToDelete) {
-      // In a real app, you'd call an API to delete this appointment
-      console.log('Deleting appointment with ID:', appointmentToDelete);
+      // Get the appointment to be deleted
+      const appointmentToRemove = appointments.find(a => a.id === appointmentToDelete);
+      
+      // Filter out the appointment with matching ID
+      const updatedAppointments = appointments.filter(
+        (appointment) => appointment.id !== appointmentToDelete
+      );
+      
+      setAppointments(updatedAppointments);
+      
+      // Show confirmation toast
+      toast({
+        title: "Appointment Deleted",
+        description: `Appointment for ${appointmentToRemove?.patientName || 'patient'} has been successfully removed.`,
+        variant: "destructive",
+        className: "bg-[#450A0A] border border-red-700/50 text-white",
+      });
     }
     setIsDeleteDialogOpen(false);
     setAppointmentToDelete(null);
@@ -409,7 +572,7 @@ export default function AppointmentsPage() {
         return sortMultiplier * (minutesA - minutesB);
       }
       case "injury":
-        return sortMultiplier * a.issue.localeCompare(b.issue);  
+        return sortMultiplier * a.issue.localeCompare(b.issue);
       case "status":
         return sortMultiplier * a.status.localeCompare(b.status);
       case "visitType":
@@ -430,25 +593,33 @@ export default function AppointmentsPage() {
 
   // Form state handlers
   const [formData, setFormData] = useState<Partial<Appointment>>({
-    patientName: '',
-    email: '',
-    gender: 'male',
-    date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }),
-    time: '',
-    phone: '',
-    doctor: '',
-    issue: '',
-    status: 'Scheduled',
-    visitType: 'New Patient'
+    patientName: "",
+    email: "",
+    gender: "male",
+    date: new Date().toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }),
+    time: "",
+    phone: "",
+    doctor: "",
+    issue: "",
+    status: "Scheduled",
+    visitType: "New Patient",
   });
 
-  const handleFormInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleFormInputChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleGenderChange = (gender: 'male' | 'female') => {
-    setFormData(prev => ({ ...prev, gender }));
+  const handleGenderChange = (gender: "male" | "female") => {
+    setFormData((prev) => ({ ...prev, gender }));
   };
 
   const handleSubmitForm = (e: React.FormEvent) => {
@@ -463,16 +634,20 @@ export default function AppointmentsPage() {
     } else if (isFormOpen && !isEditMode) {
       // Reset form when adding new appointment
       setFormData({
-        patientName: '',
-        email: '',
-        gender: 'male',
-        date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }),
-        time: '',
-        phone: '',
-        doctor: '',
-        issue: '',
-        status: 'Scheduled',
-        visitType: 'New Patient'
+        patientName: "",
+        email: "",
+        gender: "male",
+        date: new Date().toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        }),
+        time: "",
+        phone: "",
+        doctor: "",
+        issue: "",
+        status: "Scheduled",
+        visitType: "New Patient",
       });
     }
   }, [isFormOpen, isEditMode, currentAppointment]);
@@ -489,14 +664,14 @@ export default function AppointmentsPage() {
             <div className="flex items-center justify-between px-6 py-4 border-b border-[#5D0A72]/20">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-[#5D0A72]/30 flex items-center justify-center overflow-hidden">
-                  <svg 
-                    xmlns="http://www.w3.org/2000/svg" 
-                    className="h-6 w-6 text-[#94A3B8]" 
-                    viewBox="0 0 24 24" 
-                    fill="none" 
-                    stroke="currentColor" 
-                    strokeWidth="2" 
-                    strokeLinecap="round" 
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6 text-[#94A3B8]"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
                     strokeLinejoin="round"
                   >
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
@@ -504,21 +679,21 @@ export default function AppointmentsPage() {
                   </svg>
                 </div>
                 <h2 className="text-white text-lg font-medium">
-                  {isEditMode ? 'Edit Appointment' : 'New Appointment'}
+                  {isEditMode ? "Edit Appointment" : "New Appointment"}
                 </h2>
               </div>
-              <button 
+              <button
                 onClick={handleFormClose}
                 className="text-[#94A3B8] hover:text-white transition-colors"
               >
-                <svg 
-                  xmlns="http://www.w3.org/2000/svg" 
-                  className="h-6 w-6" 
-                  viewBox="0 0 24 24" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  strokeWidth="2" 
-                  strokeLinecap="round" 
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
                   strokeLinejoin="round"
                 >
                   <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -531,7 +706,10 @@ export default function AppointmentsPage() {
               {/* Name and Email */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label htmlFor="patientName" className="block text-[#94A3B8] text-sm font-medium">
+                  <label
+                    htmlFor="patientName"
+                    className="block text-[#94A3B8] text-sm font-medium"
+                  >
                     Name*
                   </label>
                   <div className="relative">
@@ -545,7 +723,16 @@ export default function AppointmentsPage() {
                       className="bg-[#03001C] w-full px-4 py-3 rounded-lg text-white border border-[#5D0A72]/30 focus:outline-none focus:ring-1 focus:ring-[#5D0A72]/50"
                     />
                     <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-[#94A3B8]">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
                         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                         <circle cx="12" cy="7" r="4"></circle>
                       </svg>
@@ -553,7 +740,10 @@ export default function AppointmentsPage() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <label htmlFor="email" className="block text-[#94A3B8] text-sm font-medium">
+                  <label
+                    htmlFor="email"
+                    className="block text-[#94A3B8] text-sm font-medium"
+                  >
                     Email*
                   </label>
                   <div className="relative">
@@ -567,7 +757,16 @@ export default function AppointmentsPage() {
                       className="bg-[#03001C] w-full px-4 py-3 rounded-lg text-white border border-[#5D0A72]/30 focus:outline-none focus:ring-1 focus:ring-[#5D0A72]/50"
                     />
                     <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-[#94A3B8]">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
                         <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
                         <polyline points="22,6 12,13 2,6"></polyline>
                       </svg>
@@ -586,11 +785,14 @@ export default function AppointmentsPage() {
                     <input
                       id="gender-male"
                       type="radio"
-                      checked={formData.gender === 'male'}
-                      onChange={() => handleGenderChange('male')}
+                      checked={formData.gender === "male"}
+                      onChange={() => handleGenderChange("male")}
                       className="w-4 h-4 text-[#5D0A72] border-[#5D0A72]/30 focus:ring-[#5D0A72]/50"
                     />
-                    <label htmlFor="gender-male" className="ml-2 text-[#94A3B8]">
+                    <label
+                      htmlFor="gender-male"
+                      className="ml-2 text-[#94A3B8]"
+                    >
                       Male
                     </label>
                   </div>
@@ -598,11 +800,14 @@ export default function AppointmentsPage() {
                     <input
                       id="gender-female"
                       type="radio"
-                      checked={formData.gender === 'female'}
-                      onChange={() => handleGenderChange('female')}
+                      checked={formData.gender === "female"}
+                      onChange={() => handleGenderChange("female")}
                       className="w-4 h-4 text-[#5D0A72] border-[#5D0A72]/30 focus:ring-[#5D0A72]/50"
                     />
-                    <label htmlFor="gender-female" className="ml-2 text-[#94A3B8]">
+                    <label
+                      htmlFor="gender-female"
+                      className="ml-2 text-[#94A3B8]"
+                    >
                       Female
                     </label>
                   </div>
@@ -612,7 +817,10 @@ export default function AppointmentsPage() {
               {/* Date and Time */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label htmlFor="date" className="block text-[#94A3B8] text-sm font-medium">
+                  <label
+                    htmlFor="date"
+                    className="block text-[#94A3B8] text-sm font-medium"
+                  >
                     Choose a date*
                   </label>
                   <div className="relative">
@@ -627,8 +835,24 @@ export default function AppointmentsPage() {
                       className="bg-[#03001C] w-full px-4 py-3 rounded-lg text-white border border-[#5D0A72]/30 focus:outline-none focus:ring-1 focus:ring-[#5D0A72]/50"
                     />
                     <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-[#94A3B8]">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <rect
+                          x="3"
+                          y="4"
+                          width="18"
+                          height="18"
+                          rx="2"
+                          ry="2"
+                        ></rect>
                         <line x1="16" y1="2" x2="16" y2="6"></line>
                         <line x1="8" y1="2" x2="8" y2="6"></line>
                         <line x1="3" y1="10" x2="21" y2="10"></line>
@@ -637,7 +861,10 @@ export default function AppointmentsPage() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <label htmlFor="time" className="block text-[#94A3B8] text-sm font-medium">
+                  <label
+                    htmlFor="time"
+                    className="block text-[#94A3B8] text-sm font-medium"
+                  >
                     Time*
                   </label>
                   <div className="relative">
@@ -652,7 +879,16 @@ export default function AppointmentsPage() {
                       className="bg-[#03001C] w-full px-4 py-3 rounded-lg text-white border border-[#5D0A72]/30 focus:outline-none focus:ring-1 focus:ring-[#5D0A72]/50"
                     />
                     <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-[#94A3B8]">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
                         <circle cx="12" cy="12" r="10"></circle>
                         <polyline points="12 6 12 12 16 14"></polyline>
                       </svg>
@@ -664,7 +900,10 @@ export default function AppointmentsPage() {
               {/* Mobile and Doctor Name */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label htmlFor="phone" className="block text-[#94A3B8] text-sm font-medium">
+                  <label
+                    htmlFor="phone"
+                    className="block text-[#94A3B8] text-sm font-medium"
+                  >
                     Mobile*
                   </label>
                   <div className="relative">
@@ -678,14 +917,26 @@ export default function AppointmentsPage() {
                       className="bg-[#03001C] w-full px-4 py-3 rounded-lg text-white border border-[#5D0A72]/30 focus:outline-none focus:ring-1 focus:ring-[#5D0A72]/50"
                     />
                     <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-[#94A3B8]">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
                         <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
                       </svg>
                     </div>
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <label htmlFor="doctor" className="block text-[#94A3B8] text-sm font-medium">
+                  <label
+                    htmlFor="doctor"
+                    className="block text-[#94A3B8] text-sm font-medium"
+                  >
                     Doctor Name*
                   </label>
                   <div className="relative">
@@ -704,8 +955,17 @@ export default function AppointmentsPage() {
                       <option value="Dr.Pooja Patel">Dr. Pooja Patel</option>
                     </select>
                     <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-[#94A3B8]">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M6 9l6 6 6-6"/>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M6 9l6 6 6-6" />
                       </svg>
                     </div>
                   </div>
@@ -714,7 +974,10 @@ export default function AppointmentsPage() {
 
               {/* Injury/Condition */}
               <div className="space-y-2">
-                <label htmlFor="issue" className="block text-[#94A3B8] text-sm font-medium">
+                <label
+                  htmlFor="issue"
+                  className="block text-[#94A3B8] text-sm font-medium"
+                >
                   Injury/Condition
                 </label>
                 <textarea
@@ -730,7 +993,10 @@ export default function AppointmentsPage() {
               {/* Appointment Status and Visit Type */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label htmlFor="status" className="block text-[#94A3B8] text-sm font-medium">
+                  <label
+                    htmlFor="status"
+                    className="block text-[#94A3B8] text-sm font-medium"
+                  >
                     Appointment Status
                   </label>
                   <div className="relative">
@@ -746,14 +1012,26 @@ export default function AppointmentsPage() {
                       <option value="Cancelled">Cancelled</option>
                     </select>
                     <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-[#94A3B8]">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M6 9l6 6 6-6"/>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M6 9l6 6 6-6" />
                       </svg>
                     </div>
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <label htmlFor="visitType" className="block text-[#94A3B8] text-sm font-medium">
+                  <label
+                    htmlFor="visitType"
+                    className="block text-[#94A3B8] text-sm font-medium"
+                  >
                     Visit Type
                   </label>
                   <div className="relative">
@@ -768,8 +1046,17 @@ export default function AppointmentsPage() {
                       <option value="Follow-Up">Follow-Up</option>
                     </select>
                     <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-[#94A3B8]">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M6 9l6 6 6-6"/>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M6 9l6 6 6-6" />
                       </svg>
                     </div>
                   </div>
@@ -804,14 +1091,26 @@ export default function AppointmentsPage() {
             <div className="text-center mb-6">
               <div className="flex justify-center mb-4">
                 <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-red-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-8 w-8 text-red-600"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
                     <path d="M18 6L6 18M6 6l12 12"></path>
                   </svg>
                 </div>
               </div>
-              <h3 className="text-xl font-medium text-white mb-2">Delete Appointment</h3>
+              <h3 className="text-xl font-medium text-white mb-2">
+                Delete Appointment
+              </h3>
               <p className="text-[#94A3B8]">
-                Are you sure you want to delete this appointment? This action cannot be undone.
+                Are you sure you want to delete this appointment? This action
+                cannot be undone.
               </p>
             </div>
             <div className="flex justify-center gap-4">
@@ -1184,7 +1483,7 @@ export default function AppointmentsPage() {
                     )}
                   </div>
 
-                  <button 
+                  <button
                     onClick={handleAddClick}
                     className="relative bg-[#05002E] text-[#94A3B8] p-2 rounded-lg hover:bg-[#0A004A]/20 transition-colors border border-[#5D0A72]/10 group"
                   >
@@ -1418,46 +1717,46 @@ export default function AppointmentsPage() {
                         />
                       )}
                       {columns.find((c) => c.id === "time")?.visible && (
-              <SortableHeader
-                label="Time"
-                columnKey="time"
-                sortColumn={sortColumn}
-                sortOrder={sortOrder}
-                onSort={handleSortClick}
-              />
+                        <SortableHeader
+                          label="Time"
+                          columnKey="time"
+                          sortColumn={sortColumn}
+                          sortOrder={sortOrder}
+                          onSort={handleSortClick}
+                        />
                       )}
                       {columns.find((c) => c.id === "mobile")?.visible && (
                         <th className="py-4 px-6 font-medium">Mobile</th>
                       )}
                       {columns.find((c) => c.id === "injury")?.visible && (
-              <SortableHeader
-                label="Injury"
-                columnKey="injury"
-                sortColumn={sortColumn}
-                sortOrder={sortOrder}
-                onSort={handleSortClick}
-              />
+                        <SortableHeader
+                          label="Injury"
+                          columnKey="injury"
+                          sortColumn={sortColumn}
+                          sortOrder={sortOrder}
+                          onSort={handleSortClick}
+                        />
                       )}
                       {columns.find((c) => c.id === "email")?.visible && (
                         <th className="py-4 px-6 font-medium">Email</th>
                       )}
                       {columns.find((c) => c.id === "status")?.visible && (
-              <SortableHeader
-                label="Status"
-                columnKey="status"
-                sortColumn={sortColumn}
-                sortOrder={sortOrder}
-                onSort={handleSortClick}
-              />
+                        <SortableHeader
+                          label="Status"
+                          columnKey="status"
+                          sortColumn={sortColumn}
+                          sortOrder={sortOrder}
+                          onSort={handleSortClick}
+                        />
                       )}
                       {columns.find((c) => c.id === "visitType")?.visible && (
-              <SortableHeader
-                label="Visit Type"
-                columnKey="visitType"
-                sortColumn={sortColumn}
-                sortOrder={sortOrder}
-                onSort={handleSortClick}
-              />
+                        <SortableHeader
+                          label="Visit Type"
+                          columnKey="visitType"
+                          sortColumn={sortColumn}
+                          sortOrder={sortOrder}
+                          onSort={handleSortClick}
+                        />
                       )}
                       <th className="py-4 px-6 font-medium rounded-r-lg">
                         Actions
@@ -1594,7 +1893,7 @@ export default function AppointmentsPage() {
                         )}
                         <td className="py-4 px-6">
                           <div className="flex items-center gap-2">
-                            <button 
+                            <button
                               onClick={() => handleEditClick(appointment)}
                               className="text-blue-500 hover:text-blue-700"
                             >
@@ -1612,7 +1911,7 @@ export default function AppointmentsPage() {
                                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                               </svg>
                             </button>
-                            <button 
+                            <button
                               onClick={() => handleDeleteClick(appointment.id)}
                               className="text-red-500 hover:text-red-700"
                             >
