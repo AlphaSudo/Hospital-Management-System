@@ -428,10 +428,409 @@ export default function AppointmentsPage() {
   );
   const totalPages = Math.ceil(sortedAppointments.length / itemsPerPage);
 
+  // Form state handlers
+  const [formData, setFormData] = useState<Partial<Appointment>>({
+    patientName: '',
+    email: '',
+    gender: 'male',
+    date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }),
+    time: '',
+    phone: '',
+    doctor: '',
+    issue: '',
+    status: 'Scheduled',
+    visitType: 'New Patient'
+  });
+
+  const handleFormInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleGenderChange = (gender: 'male' | 'female') => {
+    setFormData(prev => ({ ...prev, gender }));
+  };
+
+  const handleSubmitForm = (e: React.FormEvent) => {
+    e.preventDefault();
+    handleFormSubmit(formData);
+  };
+
+  // Initialize form data when editing
+  useEffect(() => {
+    if (isFormOpen && isEditMode && currentAppointment) {
+      setFormData(currentAppointment);
+    } else if (isFormOpen && !isEditMode) {
+      // Reset form when adding new appointment
+      setFormData({
+        patientName: '',
+        email: '',
+        gender: 'male',
+        date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }),
+        time: '',
+        phone: '',
+        doctor: '',
+        issue: '',
+        status: 'Scheduled',
+        visitType: 'New Patient'
+      });
+    }
+  }, [isFormOpen, isEditMode, currentAppointment]);
+
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Add SVG gradients for charts */}
       <ChartGradients />
+
+      {/* Appointment Form Modal */}
+      {isFormOpen && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center overflow-auto">
+          <div className="bg-[#020120] rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-[#5D0A72]/20">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-[#5D0A72]/30 flex items-center justify-center overflow-hidden">
+                  <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    className="h-6 w-6 text-[#94A3B8]" 
+                    viewBox="0 0 24 24" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    strokeWidth="2" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round"
+                  >
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                </div>
+                <h2 className="text-white text-lg font-medium">
+                  {isEditMode ? 'Edit Appointment' : 'New Appointment'}
+                </h2>
+              </div>
+              <button 
+                onClick={handleFormClose}
+                className="text-[#94A3B8] hover:text-white transition-colors"
+              >
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  className="h-6 w-6" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  strokeWidth="2" 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round"
+                >
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmitForm} className="p-6 space-y-6">
+              {/* Name and Email */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label htmlFor="patientName" className="block text-[#94A3B8] text-sm font-medium">
+                    Name*
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      id="patientName"
+                      name="patientName"
+                      value={formData.patientName}
+                      onChange={handleFormInputChange}
+                      required
+                      className="bg-[#03001C] w-full px-4 py-3 rounded-lg text-white border border-[#5D0A72]/30 focus:outline-none focus:ring-1 focus:ring-[#5D0A72]/50"
+                    />
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-[#94A3B8]">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label htmlFor="email" className="block text-[#94A3B8] text-sm font-medium">
+                    Email*
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleFormInputChange}
+                      required
+                      className="bg-[#03001C] w-full px-4 py-3 rounded-lg text-white border border-[#5D0A72]/30 focus:outline-none focus:ring-1 focus:ring-[#5D0A72]/50"
+                    />
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-[#94A3B8]">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Gender */}
+              <div className="space-y-2">
+                <label className="block text-[#94A3B8] text-sm font-medium">
+                  Gender:
+                </label>
+                <div className="flex items-center space-x-4">
+                  <div className="flex items-center">
+                    <input
+                      id="gender-male"
+                      type="radio"
+                      checked={formData.gender === 'male'}
+                      onChange={() => handleGenderChange('male')}
+                      className="w-4 h-4 text-[#5D0A72] border-[#5D0A72]/30 focus:ring-[#5D0A72]/50"
+                    />
+                    <label htmlFor="gender-male" className="ml-2 text-[#94A3B8]">
+                      Male
+                    </label>
+                  </div>
+                  <div className="flex items-center">
+                    <input
+                      id="gender-female"
+                      type="radio"
+                      checked={formData.gender === 'female'}
+                      onChange={() => handleGenderChange('female')}
+                      className="w-4 h-4 text-[#5D0A72] border-[#5D0A72]/30 focus:ring-[#5D0A72]/50"
+                    />
+                    <label htmlFor="gender-female" className="ml-2 text-[#94A3B8]">
+                      Female
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              {/* Date and Time */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label htmlFor="date" className="block text-[#94A3B8] text-sm font-medium">
+                    Choose a date*
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      id="date"
+                      name="date"
+                      value={formData.date}
+                      onChange={handleFormInputChange}
+                      required
+                      placeholder="MM/DD/YYYY"
+                      className="bg-[#03001C] w-full px-4 py-3 rounded-lg text-white border border-[#5D0A72]/30 focus:outline-none focus:ring-1 focus:ring-[#5D0A72]/50"
+                    />
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-[#94A3B8]">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label htmlFor="time" className="block text-[#94A3B8] text-sm font-medium">
+                    Time*
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      id="time"
+                      name="time"
+                      value={formData.time}
+                      onChange={handleFormInputChange}
+                      required
+                      placeholder="HH:MM"
+                      className="bg-[#03001C] w-full px-4 py-3 rounded-lg text-white border border-[#5D0A72]/30 focus:outline-none focus:ring-1 focus:ring-[#5D0A72]/50"
+                    />
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-[#94A3B8]">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Mobile and Doctor Name */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label htmlFor="phone" className="block text-[#94A3B8] text-sm font-medium">
+                    Mobile*
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="tel"
+                      id="phone"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleFormInputChange}
+                      required
+                      className="bg-[#03001C] w-full px-4 py-3 rounded-lg text-white border border-[#5D0A72]/30 focus:outline-none focus:ring-1 focus:ring-[#5D0A72]/50"
+                    />
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-[#94A3B8]">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label htmlFor="doctor" className="block text-[#94A3B8] text-sm font-medium">
+                    Doctor Name*
+                  </label>
+                  <div className="relative">
+                    <select
+                      id="doctor"
+                      name="doctor"
+                      value={formData.doctor}
+                      onChange={handleFormInputChange}
+                      required
+                      className="bg-[#03001C] w-full px-4 py-3 rounded-lg text-white border border-[#5D0A72]/30 focus:outline-none focus:ring-1 focus:ring-[#5D0A72]/50 appearance-none"
+                    >
+                      <option value="">Select Doctor</option>
+                      <option value="Dr.Jay Soni">Dr. Jay Soni</option>
+                      <option value="Dr.Sarah Smith">Dr. Sarah Smith</option>
+                      <option value="Dr.Rajesh">Dr. Rajesh</option>
+                      <option value="Dr.Pooja Patel">Dr. Pooja Patel</option>
+                    </select>
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-[#94A3B8]">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M6 9l6 6 6-6"/>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Injury/Condition */}
+              <div className="space-y-2">
+                <label htmlFor="issue" className="block text-[#94A3B8] text-sm font-medium">
+                  Injury/Condition
+                </label>
+                <textarea
+                  id="issue"
+                  name="issue"
+                  rows={3}
+                  value={formData.issue}
+                  onChange={handleFormInputChange}
+                  className="bg-[#03001C] w-full px-4 py-3 rounded-lg text-white border border-[#5D0A72]/30 focus:outline-none focus:ring-1 focus:ring-[#5D0A72]/50"
+                ></textarea>
+              </div>
+
+              {/* Appointment Status and Visit Type */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label htmlFor="status" className="block text-[#94A3B8] text-sm font-medium">
+                    Appointment Status
+                  </label>
+                  <div className="relative">
+                    <select
+                      id="status"
+                      name="status"
+                      value={formData.status}
+                      onChange={handleFormInputChange}
+                      className="bg-[#03001C] w-full px-4 py-3 rounded-lg text-white border border-[#5D0A72]/30 focus:outline-none focus:ring-1 focus:ring-[#5D0A72]/50 appearance-none"
+                    >
+                      <option value="Scheduled">Scheduled</option>
+                      <option value="Completed">Completed</option>
+                      <option value="Cancelled">Cancelled</option>
+                    </select>
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-[#94A3B8]">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M6 9l6 6 6-6"/>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label htmlFor="visitType" className="block text-[#94A3B8] text-sm font-medium">
+                    Visit Type
+                  </label>
+                  <div className="relative">
+                    <select
+                      id="visitType"
+                      name="visitType"
+                      value={formData.visitType}
+                      onChange={handleFormInputChange}
+                      className="bg-[#03001C] w-full px-4 py-3 rounded-lg text-white border border-[#5D0A72]/30 focus:outline-none focus:ring-1 focus:ring-[#5D0A72]/50 appearance-none"
+                    >
+                      <option value="New Patient">New Patient</option>
+                      <option value="Follow-Up">Follow-Up</option>
+                    </select>
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-[#94A3B8]">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M6 9l6 6 6-6"/>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Form Buttons */}
+              <div className="flex justify-end gap-3 pt-4">
+                <button
+                  type="button"
+                  onClick={handleFormClose}
+                  className="px-6 py-2 bg-[#494949] text-white rounded-lg hover:bg-[#5D5D5D] transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-6 py-2 bg-[#E53E3E] text-white rounded-lg hover:bg-[#C53030] transition-colors"
+                >
+                  Save
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Dialog */}
+      {isDeleteDialogOpen && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+          <div className="bg-[#020120] rounded-lg w-full max-w-md p-6">
+            <div className="text-center mb-6">
+              <div className="flex justify-center mb-4">
+                <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-red-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M18 6L6 18M6 6l12 12"></path>
+                  </svg>
+                </div>
+              </div>
+              <h3 className="text-xl font-medium text-white mb-2">Delete Appointment</h3>
+              <p className="text-[#94A3B8]">
+                Are you sure you want to delete this appointment? This action cannot be undone.
+              </p>
+            </div>
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={handleCancelDelete}
+                className="px-6 py-2 bg-[#494949] text-white rounded-lg hover:bg-[#5D5D5D] transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmDelete}
+                className="px-6 py-2 bg-[#E53E3E] text-white rounded-lg hover:bg-[#C53030] transition-colors"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Sidebar */}
       <Sidebar isOpen={sidebarOpen} />
@@ -1195,7 +1594,10 @@ export default function AppointmentsPage() {
                         )}
                         <td className="py-4 px-6">
                           <div className="flex items-center gap-2">
-                            <button className="text-blue-500 hover:text-blue-700">
+                            <button 
+                              onClick={() => handleEditClick(appointment)}
+                              className="text-blue-500 hover:text-blue-700"
+                            >
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 className="h-5 w-5"
@@ -1210,7 +1612,10 @@ export default function AppointmentsPage() {
                                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                               </svg>
                             </button>
-                            <button className="text-red-500 hover:text-red-700">
+                            <button 
+                              onClick={() => handleDeleteClick(appointment.id)}
+                              className="text-red-500 hover:text-red-700"
+                            >
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 className="h-5 w-5"
