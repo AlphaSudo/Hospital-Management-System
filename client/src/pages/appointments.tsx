@@ -1910,7 +1910,15 @@ export default function AppointmentsPage() {
                     {currentAppointments.map((appointment) => (
                       <tr
                         key={appointment.id}
-                        className="text-[#94A3B8] hover:bg-[#02001e]/30 transition-colors even:bg-[#000041] "
+                        className="text-[#94A3B8] hover:bg-[#02001e]/30 transition-colors even:bg-[#000041] cursor-pointer"
+                        onClick={(e) => {
+                          // Don't trigger edit if checkbox is clicked
+                          if ((e.target as HTMLElement).closest('input[type="checkbox"]') ||
+                              (e.target as HTMLElement).closest('button')) {
+                            return;
+                          }
+                          handleEditClick(appointment);
+                        }}
                       >
                         <td className="py-4 px-6">
                           <input
@@ -2085,7 +2093,10 @@ export default function AppointmentsPage() {
                         <td className="py-4 px-6">
                           <div className="flex items-center gap-2">
                             <button
-                              onClick={() => handleEditClick(appointment)}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleEditClick(appointment);
+                              }}
                               className="text-blue-500 hover:text-blue-700"
                             >
                               <svg
@@ -2103,7 +2114,10 @@ export default function AppointmentsPage() {
                               </svg>
                             </button>
                             <button
-                              onClick={() => handleDeleteClick(appointment.id)}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteClick(appointment.id);
+                              }}
                               className="text-red-500 hover:text-red-700"
                             >
                               <svg
