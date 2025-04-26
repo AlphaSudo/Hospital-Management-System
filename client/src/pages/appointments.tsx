@@ -3,6 +3,7 @@ import { Sidebar } from "@/components/ui/sidebar";
 import { ChartGradients } from "@/lib/chart-gradients";
 import SortableHeader from "@/components/ui/SortableHeader";
 import { useToast } from "@/hooks/use-toast";
+import * as XLSX from 'xlsx';
 // import { cn } from "@/lib/utils";
 
 // Define appointment data types
@@ -489,6 +490,96 @@ export default function AppointmentsPage() {
   const handleCancelDelete = () => {
     setIsDeleteDialogOpen(false);
     setAppointmentToDelete(null);
+  };
+  
+  // Bulk delete handler
+  const handleBulkDelete = () => {
+    if (selectedAppointments.length === 0) return;
+    
+    // Filter out selected appointments
+    const updatedAppointments = appointments.filter(
+      appointment => !selectedAppointments.includes(appointment.id)
+    );
+    
+    setAppointments(updatedAppointments);
+    
+    // Show toast notification
+    toast({
+      title: "Appointments Deleted",
+      description: `${selectedAppointments.length} appointment${selectedAppointments.length > 1 ? 's' : ''} successfully removed.`,
+      variant: "destructive",
+      className: "bg-[#450A0A] border border-red-700/50 text-white",
+    });
+    
+    // Clear selections
+    setSelectedAppointments([]);
+    setSelectAll(false);
+  };
+  
+  // Refresh table handler
+  const handleRefreshTable = () => {
+    // Reset to initial appointments
+    setAppointments(initialAppointments);
+    
+    // Reset selections
+    setSelectedAppointments([]);
+    setSelectAll(false);
+    
+    // Reset pagination and sorting
+    setCurrentPage(1);
+    setSortColumn(null);
+    setSortOrder(null);
+    
+    // Show toast notification
+    toast({
+      title: "Table Refreshed",
+      description: "Appointments data has been refreshed.",
+      className: "bg-[#05002E] border border-[#5D0A72]/20 text-white",
+    });
+  };
+  
+  // XLSX download handler
+  const handleXlsxDownload = () => {
+    try {
+      // Prepare data for export - using the currently sorted/filtered data
+      const exportData = sortedAppointments.map(appointment => ({
+        'Patient Name': appointment.patientName,
+        'Doctor': appointment.doctor,
+        'Gender': appointment.gender,
+        'Date': appointment.date,
+        'Time': appointment.time,
+        'Phone': appointment.phone,
+        'Issue': appointment.issue,
+        'Email': appointment.email,
+        'Status': appointment.status,
+        'Visit Type': appointment.visitType
+      }));
+      
+      // Create worksheet
+      const worksheet = XLSX.utils.json_to_sheet(exportData);
+      
+      // Create workbook
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Appointments");
+      
+      // Generate file and trigger download
+      XLSX.writeFile(workbook, "Cliniva_Appointments.xlsx");
+      
+      // Show toast notification
+      toast({
+        title: "Export Successful",
+        description: "Appointments data has been exported to Excel.",
+        className: "bg-[#05002E] border border-[#5D0A72]/20 text-white",
+      });
+    } catch (error) {
+      // Show error toast
+      toast({
+        title: "Export Failed",
+        description: "There was an error exporting the data.",
+        variant: "destructive",
+      });
+      console.error("Export error:", error);
+    }
   };
 
   // Function to get color based on status
