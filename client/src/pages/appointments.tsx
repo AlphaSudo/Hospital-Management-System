@@ -1937,12 +1937,24 @@ export default function AppointmentsPage() {
                                     .join("")}
                                 </span>
                               </div>
-                              <span>{appointment.patientName}</span>
+                              <div className="relative group">
+                                <span className="truncate block max-w-[150px]">{appointment.patientName}</span>
+                                <span className="absolute invisible group-hover:visible bg-[#3466ad] text-white text-xs px-2 py-1 rounded-lg -bottom-8 left-0 z-50 whitespace-nowrap">
+                                  {appointment.patientName}
+                                </span>
+                              </div>
                             </div>
                           </td>
                         )}
                         {columns.find((c) => c.id === "doctor")?.visible && (
-                          <td className="py-4 px-6">{appointment.doctor}</td>
+                          <td className="py-4 px-6">
+                            <div className="relative group">
+                              <span className="truncate block max-w-[150px]">{appointment.doctor}</span>
+                              <span className="absolute invisible group-hover:visible bg-[#3466ad] text-white text-xs px-2 py-1 rounded-lg -bottom-8 left-0 z-50 whitespace-nowrap">
+                                {appointment.doctor}
+                              </span>
+                            </div>
+                          </td>
                         )}
                         {columns.find((c) => c.id === "gender")?.visible && (
                           <td className="py-4 px-6">
@@ -1958,14 +1970,21 @@ export default function AppointmentsPage() {
                           </td>
                         )}
                         {columns.find((c) => c.id === "date")?.visible && (
-                          <td className="py-4 px-6">{appointment.date}</td>
+                          <td className="py-4 px-6">
+                            <div className="relative group">
+                              <span className="truncate block max-w-[120px]">{appointment.date}</span>
+                              <span className="absolute invisible group-hover:visible bg-[#3466ad] text-white text-xs px-2 py-1 rounded-lg -bottom-8 left-0 z-50 whitespace-nowrap">
+                                {appointment.date}
+                              </span>
+                            </div>
+                          </td>
                         )}
                         {columns.find((c) => c.id === "time")?.visible && (
                           <td className="py-4 px-6">
                             <div className="flex items-center">
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
-                                className="h-4 w-4 mr-2 text-[#94A3B8]/70"
+                                className="h-4 w-4 mr-2 text-[#94A3B8]/70 flex-shrink-0"
                                 viewBox="0 0 24 24"
                                 fill="none"
                                 stroke="currentColor"
@@ -1976,7 +1995,12 @@ export default function AppointmentsPage() {
                                 <circle cx="12" cy="12" r="10" />
                                 <polyline points="12 6 12 12 16 14" />
                               </svg>
-                              {appointment.time}
+                              <div className="relative group">
+                                <span className="truncate block max-w-[100px]">{appointment.time}</span>
+                                <span className="absolute invisible group-hover:visible bg-[#3466ad] text-white text-xs px-2 py-1 rounded-lg -bottom-8 left-0 z-50 whitespace-nowrap">
+                                  {appointment.time}
+                                </span>
+                              </div>
                             </div>
                           </td>
                         )}
@@ -1985,7 +2009,7 @@ export default function AppointmentsPage() {
                             <div className="flex items-center">
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
-                                className="h-4 w-4 mr-2 text-[#94A3B8]/70"
+                                className="h-4 w-4 mr-2 text-[#94A3B8]/70 flex-shrink-0"
                                 viewBox="0 0 24 24"
                                 fill="none"
                                 stroke="currentColor"
@@ -1995,19 +2019,31 @@ export default function AppointmentsPage() {
                               >
                                 <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
                               </svg>
-                              {appointment.phone}
+                              <div className="relative group">
+                                <span className="truncate block max-w-[120px]">{appointment.phone}</span>
+                                <span className="absolute invisible group-hover:visible bg-[#3466ad] text-white text-xs px-2 py-1 rounded-lg -bottom-8 left-0 z-50 whitespace-nowrap">
+                                  {appointment.phone}
+                                </span>
+                              </div>
                             </div>
                           </td>
                         )}
                         {columns.find((c) => c.id === "injury")?.visible && (
-                          <td className="py-4 px-6">{appointment.issue}</td>
+                          <td className="py-4 px-6">
+                            <div className="relative group">
+                              <span className="truncate block max-w-[150px]">{appointment.issue}</span>
+                              <span className="absolute invisible group-hover:visible bg-[#3466ad] text-white text-xs px-2 py-1 rounded-lg -bottom-8 left-0 z-50 whitespace-nowrap">
+                                {appointment.issue}
+                              </span>
+                            </div>
+                          </td>
                         )}
                         {columns.find((c) => c.id === "email")?.visible && (
                           <td className="py-4 px-6">
                             <div className="flex items-center">
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
-                                className="h-4 w-4 mr-2 text-[#94A3B8]/70"
+                                className="h-4 w-4 mr-2 text-[#94A3B8]/70 flex-shrink-0"
                                 viewBox="0 0 24 24"
                                 fill="none"
                                 stroke="currentColor"
@@ -2018,7 +2054,12 @@ export default function AppointmentsPage() {
                                 <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
                                 <polyline points="22,6 12,13 2,6" />
                               </svg>
-                              {appointment.email}
+                              <div className="relative group">
+                                <span className="truncate block max-w-[150px]">{appointment.email}</span>
+                                <span className="absolute invisible group-hover:visible bg-[#3466ad] text-white text-xs px-2 py-1 rounded-lg -bottom-8 left-0 z-50 whitespace-nowrap">
+                                  {appointment.email}
+                                </span>
+                              </div>
                             </div>
                           </td>
                         )}
@@ -2032,7 +2073,14 @@ export default function AppointmentsPage() {
                           </td>
                         )}
                         {columns.find((c) => c.id === "visitType")?.visible && (
-                          <td className="py-4 px-6">{appointment.visitType}</td>
+                          <td className="py-4 px-6">
+                            <div className="relative group">
+                              <span className="truncate block max-w-[150px]">{appointment.visitType}</span>
+                              <span className="absolute invisible group-hover:visible bg-[#3466ad] text-white text-xs px-2 py-1 rounded-lg -bottom-8 left-0 z-50 whitespace-nowrap">
+                                {appointment.visitType}
+                              </span>
+                            </div>
+                          </td>
                         )}
                         <td className="py-4 px-6">
                           <div className="flex items-center gap-2">
