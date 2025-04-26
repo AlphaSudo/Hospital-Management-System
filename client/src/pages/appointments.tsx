@@ -1511,6 +1511,93 @@ export default function AppointmentsPage() {
 
                 {/* Table Actions */}
                 <div className="flex items-center gap-2">
+                  {/* Delete Selected - only shows when items are selected */}
+                  {selectedAppointments.length > 0 && (
+                    <div className="relative parent-container">
+                      <button
+                        onClick={handleBulkDelete}
+                        className="relative bg-[#450A0A] text-white p-2 rounded-lg hover:bg-[#5A0000] transition-colors border border-red-700/40 group"
+                      >
+                        <span className="absolute invisible group-hover:visible bg-[#450A0A] text-white text-xs px-2 py-1 rounded-lg -bottom-full left-1/2 transform -translate-x-1/2 z-50">
+                          Delete {selectedAppointments.length} Selected
+                        </span>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M3 6h18" />
+                          <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+                          <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                          <line x1="10" y1="11" x2="10" y2="17" />
+                          <line x1="14" y1="11" x2="14" y2="17" />
+                        </svg>
+                      </button>
+                    </div>
+                  )}
+                  
+                  {/* Refresh Table Button */}
+                  <div className="relative parent-container">
+                    <button
+                      onClick={handleRefreshTable}
+                      className="relative bg-[#05002E] text-[#94A3B8] p-2 rounded-lg hover:bg-[#0A004A]/20 transition-colors border border-[#5D0A72]/10 group"
+                    >
+                      <span className="absolute invisible group-hover:visible bg-[#3466ad] text-white text-xs px-2 py-1 rounded-lg -bottom-full left-1/2 transform -translate-x-1/2 z-50">
+                        Refresh Table
+                      </span>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg" 
+                        className="h-5 w-5"
+                        viewBox="0 0 24 24" 
+                        fill="none" 
+                        stroke="currentColor" 
+                        strokeWidth="2" 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round"
+                      >
+                        <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
+                        <path d="M21 3v5h-5" />
+                        <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
+                        <path d="M8 16H3v5" />
+                      </svg>
+                    </button>
+                  </div>
+                  
+                  {/* XLSX Export Button */}
+                  <div className="relative parent-container">
+                    <button
+                      onClick={handleXlsxDownload}
+                      className="relative bg-[#05002E] text-[#94A3B8] p-2 rounded-lg hover:bg-[#0A004A]/20 transition-colors border border-[#5D0A72]/10 group"
+                    >
+                      <span className="absolute invisible group-hover:visible bg-[#3466ad] text-white text-xs px-2 py-1 rounded-lg -bottom-full left-1/2 transform -translate-x-1/2 z-50">
+                        Export to Excel
+                      </span>
+                      <svg 
+                        xmlns="http://www.w3.org/2000/svg" 
+                        className="h-5 w-5"
+                        viewBox="0 0 24 24" 
+                        fill="none" 
+                        stroke="currentColor" 
+                        strokeWidth="2" 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round"
+                      >
+                        <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+                        <polyline points="14 2 14 8 20 8" />
+                        <path d="M8 13h2" />
+                        <path d="M8 17h2" />
+                        <path d="M14 13h2" />
+                        <path d="M14 17h2" />
+                      </svg>
+                    </button>
+                  </div>
+                  
+                  {/* Show/Hide Columns Button */}
                   <div className="relative parent-container">
                     <button
                       onClick={() => setShowColumnSelector(!showColumnSelector)}
@@ -1574,72 +1661,37 @@ export default function AppointmentsPage() {
                     )}
                   </div>
 
-                  <button
-                    onClick={handleAddClick}
-                    className="relative bg-[#05002E] text-[#94A3B8] p-2 rounded-lg hover:bg-[#0A004A]/20 transition-colors border border-[#5D0A72]/10 group"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5"
-                      viewBox="0 0 24 24"
-                      fill="none"
+                  {/* Add New Button */}
+                  <div className="relative parent-container">
+                    <button
+                      onClick={handleAddClick}
+                      className="relative bg-[#05002E] text-[#94A3B8] p-2 rounded-lg hover:bg-[#0A004A]/20 transition-colors border border-[#5D0A72]/10 group"
                     >
-                      <circle
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                      />
-                      <path
-                        d="M15 12L12 12M12 12L9 12M12 12L12 9M12 12L12 15"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                      />
-                    </svg>
-                    <span className="absolute invisible group-hover:visible bg-[#3466ad] text-white text-xs px-2 py-1 rounded-lg -bottom-full left-1/2 transform -translate-x-1/2 z-50">
-                      Add
-                    </span>
-                  </button>
-
-                  <button className="relative bg-[#05002E] text-[#94A3B8] p-2 rounded-lg hover:bg-[#0A004A]/20 transition-colors border border-[#5D0A72]/10 group">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                    >
-                      <path
-                        d="M21 3V8M21 8H16M21 8L18 5.29168C16.4077 3.86656 14.3051 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21C16.2832 21 19.8675 18.008 20.777 14"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                    <span className="absolute invisible group-hover:visible bg-[#3466ad] text-white text-xs px-2 py-1 rounded-lg -bottom-full left-1/2 transform -translate-x-1/2 z-50">
-                      Refresh
-                    </span>
-                  </button>
-
-                  <button className="relative bg-[#05002E] text-[#94A3B8] p-2 rounded-lg hover:bg-[#0A004A]/20 transition-colors border border-[#5D0A72]/10 group">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M3 15v4c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2v-4M17 9l-5 5-5-5M12 12.8V2.5" />
-                    </svg>
-                    <span className="absolute invisible group-hover:visible bg-[#3466ad] text-white text-xs px-2 py-1 rounded-lg -bottom-full left-1/2 transform -translate-x-1/2 z-50">
-                      Xlsx Download
-                    </span>
-                  </button>
+                      <span className="absolute invisible group-hover:visible bg-[#3466ad] text-white text-xs px-2 py-1 rounded-lg -bottom-full left-1/2 transform -translate-x-1/2 z-50">
+                        Add New Appointment
+                      </span>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                      >
+                        <circle
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="1.5"
+                        />
+                        <path
+                          d="M15 12L12 12M12 12L9 12M12 12L12 9M12 12L12 15"
+                          stroke="currentColor"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                        />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
               </div>
 
