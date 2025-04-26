@@ -334,12 +334,14 @@ export default function AppointmentsPage() {
   const [isEditMode, setIsEditMode] = useState(false);
   const [currentAppointment, setCurrentAppointment] =
     useState<Appointment | null>(null);
+  const formModalRef = useRef<HTMLDivElement>(null);
 
   // Delete confirmation dialog state
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [appointmentToDelete, setAppointmentToDelete] = useState<number | null>(
     null,
   );
+  const deleteModalRef = useRef<HTMLDivElement>(null);
 
   // Column visibility state
   const [columns, setColumns] = useState<ColumnToggle[]>([
@@ -355,14 +357,24 @@ export default function AppointmentsPage() {
     { id: "visitType", label: "Visit Type", visible: true },
   ]);
 
-  // Handle clicking outside to close column selector
+  // Handle clicking outside to close column selector or form
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
+      // Close column selector if clicked outside
       if (
         columnSelectorRef.current &&
         !columnSelectorRef.current.contains(event.target as Node)
       ) {
         setShowColumnSelector(false);
+      }
+      
+      // Close form modal if clicked outside
+      if (
+        isFormOpen &&
+        formModalRef.current &&
+        !formModalRef.current.contains(event.target as Node)
+      ) {
+        handleFormClose();
       }
     }
 
@@ -370,7 +382,7 @@ export default function AppointmentsPage() {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
+  }, [isFormOpen]);
 
   // Toggle column visibility
   const toggleColumnVisibility = (columnId: string) => {
@@ -751,7 +763,7 @@ export default function AppointmentsPage() {
       {/* Appointment Form Modal */}
       {isFormOpen && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center overflow-auto">
-          <div className="bg-[#020120] rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+          <div ref={formModalRef} className="bg-[#020120] rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between px-6 py-4 border-b border-[#5D0A72]/20">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-[#5D0A72]/30 flex items-center justify-center overflow-hidden">
