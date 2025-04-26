@@ -357,7 +357,7 @@ export default function AppointmentsPage() {
     { id: "visitType", label: "Visit Type", visible: true },
   ]);
 
-  // Handle clicking outside to close column selector or form
+  // Handle clicking outside to close column selector, form or delete dialog
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       // Close column selector if clicked outside
@@ -376,13 +376,22 @@ export default function AppointmentsPage() {
       ) {
         handleFormClose();
       }
+      
+      // Close delete confirmation dialog if clicked outside
+      if (
+        isDeleteDialogOpen &&
+        deleteModalRef.current &&
+        !deleteModalRef.current.contains(event.target as Node)
+      ) {
+        handleCancelDelete();
+      }
     }
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isFormOpen]);
+  }, [isFormOpen, isDeleteDialogOpen]);
 
   // Toggle column visibility
   const toggleColumnVisibility = (columnId: string) => {
@@ -1190,7 +1199,7 @@ export default function AppointmentsPage() {
       {/* Delete Confirmation Dialog */}
       {isDeleteDialogOpen && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
-          <div className="bg-[#020120] rounded-lg w-full max-w-md p-6">
+          <div ref={deleteModalRef} className="bg-[#020120] rounded-lg w-full max-w-md p-6">
             <div className="text-center mb-6">
               <div className="flex justify-center mb-4">
                 <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center">
