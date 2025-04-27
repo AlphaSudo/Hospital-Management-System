@@ -316,7 +316,7 @@ export default function AppointmentsPage() {
           {/* Appointments Table Card */}
 
           <AppointmentsTableCard
-            appointments={paginatedAppointments}
+            appointments={appointments}
             setAppointments={setAppointments}
             selectedAppointments={selectedAppointments}
             setSelectedAppointments={setSelectedAppointments}
