@@ -55,157 +55,6 @@ export default function AppointmentsTableCard({
   const [selectAll, setSelectAll] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const handleSortClick = (column: string) => {
-    if (sortColumn === column) {
-      const nextOrder = 
-        sortOrder === "asc" ? "desc" :
-        sortOrder === "desc" ? null : 
-        "asc";
-
-      if (nextOrder === null) {
-        setSortColumn(null);
-        setSortOrder(null);
-      } else {
-        setSortOrder(nextOrder);
-      }
-    } else {
-      setSortColumn(column);
-      setSortOrder("asc");
-    }
-  };
-
-
-
-  const toggleColumnVisibility = (columnId: string) => {
-    setColumns(
-      columns.map((column) =>
-        column.id === columnId
-          ? { ...column, visible: !column.visible }
-          : column,
-      ),
-    );
-  };
-
-  const handleSelectAll = () => {
-    if (selectAll) {
-      setSelectedAppointments([]);
-    } else {
-      setSelectedAppointments(
-        appointments.map((appointment) => appointment.id),
-      );
-    }
-    setSelectAll(!selectAll);
-  };
-
-  const handleSelectAppointment = (id: number) => {
-    if (selectedAppointments.includes(id)) {
-      setSelectedAppointments(
-        selectedAppointments.filter((appointmentId) => appointmentId !== id),
-      );
-    } else {
-      setSelectedAppointments([...selectedAppointments, id]);
-    }
-  };
-
-  const handleBulkDelete = () => {
-    if (selectedAppointments.length === 0) return;
-
-    const updatedAppointments = appointments.filter(
-      appointment => !selectedAppointments.includes(appointment.id)
-    );
-
-    setAppointments(updatedAppointments);
-
-    toast({
-      title: "Appointments Deleted",
-      description: `${selectedAppointments.length} appointment${selectedAppointments.length > 1 ? 's' : ''} successfully removed.`,
-      variant: "destructive",
-      className: "bg-[#450A0A] border border-red-700/50 text-white",
-    });
-
-    setSelectedAppointments([]);
-    setSelectAll(false);
-  };
-
-  const handleRefreshTable = () => {
-    setAppointments(initialAppointments);
-    setSelectedAppointments([]);
-    setSelectAll(false);
-    setCurrentPage(1);
-    setSortColumn(null);
-    setSortOrder(null);
-
-    toast({
-      title: "Table Refreshed",
-      description: "Appointments data has been refreshed.",
-      className: "bg-[#05002E] border border-[#5D0A72]/20 text-white",
-    });
-  };
-
-  const handleXlsxDownload = () => {
-    try {
-      const exportData = sortedAppointments.map(appointment => ({
-        'Patient Name': appointment.patientName,
-        'Doctor': appointment.doctor,
-        'Gender': appointment.gender,
-        'Date': appointment.date,
-        'Time': appointment.time,
-        'Phone': appointment.phone,
-        'Issue': appointment.issue,
-        'Email': appointment.email,
-        'Status': appointment.status,
-        'Visit Type': appointment.visitType
-      }));
-
-      const worksheet = XLSX.utils.json_to_sheet(exportData);
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, "Appointments");
-      XLSX.writeFile(workbook, "Cliniva_Appointments.xlsx");
-
-      toast({
-        title: "Export Successful",
-        description: "Appointments data has been exported to Excel.",
-        className: "bg-[#05002E] border border-[#5D0A72]/20 text-white",
-      });
-    } catch (error) {
-      toast({
-        title: "Export Failed",
-        description: "There was an error exporting the data.",
-        variant: "destructive",
-      });
-      console.error("Export error:", error);
-    }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "Completed":
-        return "bg-green-100 text-green-800";
-      case "Scheduled":
-        return "bg-blue-100 text-blue-800";
-      case "Cancelled":
-        return "bg-red-100 text-red-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
-
-  const getAvatarBg = (gender: string) => {
-    return gender === "female" ? "bg-pink-200" : "bg-blue-200";
-  };
-
-  const handlePageChange = (newPage: number) => {
-    setCurrentPage(newPage);
-  };
-
-  const handleItemsPerPageChange = (
-    e: React.ChangeEvent<HTMLSelectElement>,
-  ) => {
-    setItemsPerPage(Number(e.target.value));
-    setCurrentPage(1);
-  };
-
-
   // Apply search filter first
   const filteredAppointments = useMemo(() => {
     if (!searchTerm.trim()) {
@@ -271,6 +120,15 @@ export default function AppointmentsTableCard({
     });
   }, [filteredAppointments, sortColumn, sortOrder]);
 
+  // Update selectAll state whenever selectedAppointments or sortedAppointments change
+  useEffect(() => {
+    if (sortedAppointments.length === 0) {
+      setSelectAll(false);
+    } else {
+      setSelectAll(selectedAppointments.length === sortedAppointments.length);
+    }
+  }, [selectedAppointments, sortedAppointments]);
+
   // Pagination calculations
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -280,7 +138,185 @@ export default function AppointmentsTableCard({
     return sortedAppointments.slice(indexOfFirstItem, indexOfLastItem);
   }, [sortedAppointments, indexOfFirstItem, indexOfLastItem]);
 
+  // Total pages for pagination
   const totalPages = Math.ceil(sortedAppointments.length / itemsPerPage);
+
+  const handleSortClick = (column: string) => {
+    if (sortColumn === column) {
+      const nextOrder = 
+        sortOrder === "asc" ? "desc" :
+        sortOrder === "desc" ? null : 
+        "asc";
+
+      if (nextOrder === null) {
+        setSortColumn(null);
+        setSortOrder(null);
+      } else {
+        setSortOrder(nextOrder);
+      }
+    } else {
+      setSortColumn(column);
+      setSortOrder("asc");
+    }
+  };
+
+  const toggleColumnVisibility = (columnId: string) => {
+    setColumns(
+      columns.map((column) =>
+        column.id === columnId
+          ? { ...column, visible: !column.visible }
+          : column,
+      ),
+    );
+  };
+
+  const handleSelectAll = () => {
+    if (selectAll) {
+      setSelectedAppointments([]);
+    } else {
+      setSelectedAppointments(
+        sortedAppointments.map((appointment) => appointment.id),
+      );
+    }
+  };
+
+  const handleSelectAppointment = (id: number) => {
+    if (selectedAppointments.includes(id)) {
+      setSelectedAppointments(
+        selectedAppointments.filter((appointmentId) => appointmentId !== id),
+      );
+    } else {
+      setSelectedAppointments([...selectedAppointments, id]);
+    }
+  };
+
+  const handleBulkDelete = () => {
+    if (selectedAppointments.length === 0) return;
+
+    const updatedAppointments = appointments.filter(
+      appointment => !selectedAppointments.includes(appointment.id)
+    );
+
+    setAppointments(updatedAppointments);
+
+    toast({
+      title: "Appointments Deleted",
+      description: `${selectedAppointments.length} appointment${selectedAppointments.length > 1 ? 's' : ''} successfully removed.`,
+      variant: "destructive",
+      className: "bg-[#450A0A] border border-red-700/50 text-white",
+    });
+
+    setSelectedAppointments([]);
+  };
+
+  const handleRefreshTable = () => {
+    setAppointments(initialAppointments);
+    setSelectedAppointments([]);
+    setCurrentPage(1);
+    setSortColumn(null);
+    setSortOrder(null);
+    setSearchTerm("");
+
+    toast({
+      title: "Table Refreshed",
+      description: "Appointments data has been refreshed.",
+      className: "bg-[#05002E] border border-[#5D0A72]/20 text-white",
+    });
+  };
+
+  const handleXlsxDownload = () => {
+    try {
+      const exportData = sortedAppointments.map((appointment: Appointment) => ({
+        'Patient Name': appointment.patientName,
+        'Doctor': appointment.doctor,
+        'Gender': appointment.gender,
+        'Date': appointment.date,
+        'Time': appointment.time,
+        'Phone': appointment.phone,
+        'Issue': appointment.issue,
+        'Email': appointment.email,
+        'Status': appointment.status,
+        'Visit Type': appointment.visitType
+      }));
+
+      const worksheet = XLSX.utils.json_to_sheet(exportData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Appointments");
+      XLSX.writeFile(workbook, "Cliniva_Appointments.xlsx");
+
+      toast({
+        title: "Export Successful",
+        description: "Appointments data has been exported to Excel.",
+        className: "bg-[#05002E] border border-[#5D0A72]/20 text-white",
+      });
+    } catch (error) {
+      toast({
+        title: "Export Failed",
+        description: "There was an error exporting the data.",
+        variant: "destructive",
+      });
+      console.error("Export error:", error);
+    }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "Completed":
+        return "bg-green-100 text-green-800";
+      case "Scheduled":
+        return "bg-blue-100 text-blue-800";
+      case "Cancelled":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  };
+
+  const getAvatarBg = (gender: string) => {
+    return gender === "female" ? "bg-pink-200" : "bg-blue-200";
+  };
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+  };
+
+  const handleItemsPerPageChange = (
+    e: React.ChangeEvent<HTMLSelectElement>,
+  ) => {
+    setItemsPerPage(Number(e.target.value));
+    setCurrentPage(1);
+  };
+
+  // Generate pagination items
+  const paginationItems = () => {
+    const items = [];
+    const maxPagesToShow = 5;
+    const startPage = Math.max(
+      1,
+      currentPage - Math.floor(maxPagesToShow / 2),
+    );
+    const endPage = Math.min(
+      totalPages,
+      startPage + maxPagesToShow - 1,
+    );
+
+    for (let i = startPage; i <= endPage; i++) {
+      items.push(
+        <button
+          key={i}
+          onClick={() => handlePageChange(i)}
+          className={`px-3 py-1 rounded-md ${
+            currentPage === i
+              ? "bg-[#3466ad] text-white"
+              : "bg-[#02001E] text-[#94A3B8] hover:bg-[#0A004A]/50"
+          }`}
+        >
+          {i}
+        </button>,
+      );
+    }
+    return items;
+  };
 
   return (
     <div
@@ -603,7 +639,7 @@ export default function AppointmentsTableCard({
                     onSort={handleSortClick}
                   />
                 )}
-                <th className="py-4 px-6 font-medium rounded-r-lg">
+                <th className="py-4 px-6 font-medium rounded-r-lg text-center">
                   Actions
                 </th>
               </tr>
@@ -633,145 +669,63 @@ export default function AppointmentsTableCard({
                     <td className="py-4 px-6">
                       <div className="flex items-center gap-3">
                         <div
-                          className={`w-10 h-10 rounded-full flex items-center justify-center ${getAvatarBg(appointment.gender)}`}
+                          className={`w-8 h-8 rounded-full flex items-center justify-center text-lg font-medium ${getAvatarBg(
+                            appointment.gender,
+                          )}`}
                         >
-                          <span className="text-sm font-medium">
-                            {appointment.patientName
-                              .split(" ")
-                              .map((n) => n[0])
-                              .join("")}
-                          </span>
+                          {appointment.patientName.charAt(0)}
                         </div>
-                        <div className="relative group">
-                          <span className="truncate block max-w-[150px]">{appointment.patientName}</span>
-                          <span className="absolute invisible group-hover:visible bg-[#3466ad] text-white text-xs px-2 py-1 rounded-lg -bottom-8 left-0 z-50 whitespace-nowrap">
-                            {appointment.patientName}
-                          </span>
+                        <div className="truncate max-w-[120px]" title={appointment.patientName}>
+                          {appointment.patientName}
                         </div>
                       </div>
                     </td>
                   )}
                   {columns.find((c) => c.id === "doctor")?.visible && (
                     <td className="py-4 px-6">
-                      <div className="relative group">
-                        <span className="truncate block max-w-[150px]">{appointment.doctor}</span>
-                        <span className="absolute invisible group-hover:visible bg-[#3466ad] text-white text-xs px-2 py-1 rounded-lg -bottom-8 left-0 z-50 whitespace-nowrap">
-                          {appointment.doctor}
-                        </span>
+                      <div className="truncate max-w-[120px]" title={appointment.doctor}>
+                        {appointment.doctor}
                       </div>
                     </td>
                   )}
                   {columns.find((c) => c.id === "gender")?.visible && (
                     <td className="py-4 px-6">
-                      <span
-                        className={`px-3 py-1 rounded-full text-xs font-medium ${
-                          appointment.gender === "female"
-                            ? "bg-pink-100 text-pink-800"
-                            : "bg-blue-100 text-blue-800"
-                        }`}
-                      >
-                        {appointment.gender}
-                      </span>
+                      {appointment.gender === "male" ? "Male" : "Female"}
                     </td>
                   )}
                   {columns.find((c) => c.id === "date")?.visible && (
-                    <td className="py-4 px-6">
-                      <div className="relative group">
-                        <span className="truncate block max-w-[120px]">{appointment.date}</span>
-                        <span className="absolute invisible group-hover:visible bg-[#3466ad] text-white text-xs px-2 py-1 rounded-lg -bottom-8 left-0 z-50 whitespace-nowrap">
-                          {appointment.date}
-                        </span>
-                      </div>
-                    </td>
+                    <td className="py-4 px-6">{appointment.date}</td>
                   )}
                   {columns.find((c) => c.id === "time")?.visible && (
-                    <td className="py-4 px-6">
-                      <div className="flex items-center">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-4 w-4 mr-2 text-[#94A3B8]/70 flex-shrink-0"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <circle cx="12" cy="12" r="10" />
-                          <polyline points="12 6 12 12 16 14" />
-                        </svg>
-                        <div className="relative group">
-                          <span className="truncate block max-w-[100px]">{appointment.time}</span>
-                          <span className="absolute invisible group-hover:visible bg-[#3466ad] text-white text-xs px-2 py-1 rounded-lg -bottom-8 left-0 z-50 whitespace-nowrap">
-                            {appointment.time}
-                          </span>
-                        </div>
-                      </div>
-                    </td>
+                    <td className="py-4 px-6">{appointment.time}</td>
                   )}
                   {columns.find((c) => c.id === "mobile")?.visible && (
                     <td className="py-4 px-6">
-                      <div className="flex items-center">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-4 w-4 mr-2 text-[#94A3B8]/70 flex-shrink-0"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-                        </svg>
-                        <div className="relative group">
-                          <span className="truncate block max-w-[120px]">{appointment.phone}</span>
-                          <span className="absolute invisible group-hover:visible bg-[#3466ad] text-white text-xs px-2 py-1 rounded-lg -bottom-8 left-0 z-50 whitespace-nowrap">
-                            {appointment.phone}
-                          </span>
-                        </div>
+                      <div className="truncate max-w-[120px]" title={appointment.phone}>
+                        {appointment.phone}
                       </div>
                     </td>
                   )}
                   {columns.find((c) => c.id === "injury")?.visible && (
                     <td className="py-4 px-6">
-                      <div className="relative group">
-                        <span className="truncate block max-w-[150px]">{appointment.issue}</span>
-                        <span className="absolute invisible group-hover:visible bg-[#3466ad] text-white text-xs px-2 py-1 rounded-lg -bottom-8 left-0 z-50 whitespace-nowrap">
-                          {appointment.issue}
-                        </span>
+                      <div className="truncate max-w-[150px]" title={appointment.issue}>
+                        {appointment.issue}
                       </div>
                     </td>
                   )}
                   {columns.find((c) => c.id === "email")?.visible && (
                     <td className="py-4 px-6">
-                      <div className="flex items-center">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-4 w-4 mr-2 text-[#94A3B8]/70 flex-shrink-0"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                          <polyline points="22,6 12,13 2,6" />
-                        </svg>
-                        <div className="relative group">
-                          <span className="truncate block max-w-[150px]">{appointment.email}</span>
-                          <span className="absolute invisible group-hover:visible bg-[#3466ad] text-white text-xs px-2 py-1 rounded-lg -bottom-8 left-0 z-50 whitespace-nowrap">
-                            {appointment.email}
-                          </span>
-                        </div>
+                      <div className="truncate max-w-[150px]" title={appointment.email}>
+                        {appointment.email}
                       </div>
                     </td>
                   )}
                   {columns.find((c) => c.id === "status")?.visible && (
                     <td className="py-4 px-6">
                       <span
-                        className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(appointment.status)}`}
+                        className={`px-2 py-1 rounded-full text-xs ${getStatusColor(
+                          appointment.status,
+                        )}`}
                       >
                         {appointment.status}
                       </span>
@@ -779,171 +733,101 @@ export default function AppointmentsTableCard({
                   )}
                   {columns.find((c) => c.id === "visitType")?.visible && (
                     <td className="py-4 px-6">
-                      <div className="relative group">
-                        <span className="truncate block max-w-[150px]">{appointment.visitType}</span>
-                        <span className="absolute invisible group-hover:visible bg-[#3466ad] text-white text-xs px-2 py-1 rounded-lg -bottom-8 left-0 z-50 whitespace-nowrap">
-                          {appointment.visitType}
-                        </span>
+                      <div className="truncate max-w-[120px]" title={appointment.visitType}>
+                        {appointment.visitType}
                       </div>
                     </td>
                   )}
-                  <td className="py-4 px-6">
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onEditClick(appointment);
-                        }}
-                        className="text-blue-500 hover:text-blue-700"
+                  <td className="py-4 px-6 text-center">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDeleteClick(appointment.id);
+                      }}
+                      className="text-red-500 hover:text-red-700 transition-colors"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                       >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-5 w-5"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                        </svg>
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onDeleteClick(appointment.id);
-                        }}
-                        className="text-red-500 hover:text-red-700"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-5 w-5"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <polyline points="3 6 5 6 21 6" />
-                          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                        </svg>
-                      </button>
-                    </div>
+                        <path d="M3 6h18" />
+                        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+                        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                        <line x1="10" y1="11" x2="10" y2="17" />
+                        <line x1="14" y1="11" x2="14" y2="17" />
+                      </svg>
+                    </button>
                   </td>
                 </tr>
               ))}
+              {currentAppointments.length === 0 && (
+                <tr className="text-center">
+                  <td colSpan={12} className="py-6 text-[#94A3B8]">
+                    {searchTerm.trim()
+                      ? "No appointments matching your search"
+                      : "No appointments available"}
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
 
-        <div className="p-4 flex items-center justify-between border-t border-[#5D0A72]/10">
-          <div className="text-sm text-[#94A3B8]">
-            Items per page:
+        <div className="p-4 bg-[#05002E] border-t border-[#5D0A72]/10 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div className="flex items-center gap-2 text-[#94A3B8] text-sm">
+            <span>Rows per page:</span>
             <select
-              className="ml-2 bg-[#02001E] border border-[#5D0A72]/20 rounded px-2 py-1 text-[#94A3B8]"
               value={itemsPerPage}
               onChange={handleItemsPerPageChange}
+              className="bg-[#03001c] border border-[#5D0A72]/10 rounded-md p-1 text-[#94A3B8] focus:outline-none focus:ring-1 focus:ring-[#5D0A72]/50"
             >
-              <option value="5">5</option>
-              <option value="10">10</option>
-              <option value="20">20</option>
-              <option value="50">50</option>
+              <option value={5}>5</option>
+              <option value={10}>10</option>
+              <option value={20}>20</option>
+              <option value={50}>50</option>
             </select>
+            <span>
+              Showing {indexOfFirstItem + 1} to{" "}
+              {Math.min(indexOfLastItem, sortedAppointments.length)} of{" "}
+              {sortedAppointments.length} entries
+            </span>
           </div>
-          <div className="text-sm text-[#94A3B8]">
-            {indexOfFirstItem + 1}-
-            {Math.min(indexOfLastItem, sortedAppointments.length)} of{" "}
-            {sortedAppointments.length}
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              className={`p-1 rounded-md border border-[#5D0A72]/20 ${
-                currentPage === 1
-                  ? "text-[#94A3B8]/30 cursor-not-allowed"
-                  : "text-[#94A3B8] hover:bg-[#5D0A72]/10 cursor-pointer"
-              }`}
-              onClick={() =>
-                currentPage > 1 && handlePageChange(currentPage - 1)
-              }
-              disabled={currentPage === 1}
 
+          <div className="flex gap-2">
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className={`px-3 py-1 rounded-md ${
+                currentPage === 1
+                  ? "bg-[#03001c]/50 text-[#94A3B8]/50 cursor-not-allowed"
+                  : "bg-[#03001c] text-[#94A3B8] hover:bg-[#0A004A]/50"
+              }`}
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <polyline points="15 18 9 12 15 6" />
-              </svg>
+              Previous
             </button>
 
-            <div className="flex items-center">
-              {Array.from({ length: Math.min(totalPages, 3) }).map(
-                (_, index) => {
-                  let pageNum;
-                  if (totalPages <= 3) {
-                    pageNum = index + 1;
-                  } else if (currentPage <= 2) {
-                    pageNum = index + 1;
-                  } else if (currentPage >= totalPages - 1) {
-                    pageNum = totalPages - 2 + index;
-                  } else {
-                    pageNum = currentPage - 1 + index;
-                  }
-
-                  return (
-                    <button
-                      key={pageNum}
-                      onClick={() => handlePageChange(pageNum)}
-                      className={`w-8 h-8 mx-1 rounded-md flex items-center justify-center ${
-                        currentPage === pageNum
-                          ? "bg-[#5D0A72]/30 text-white"
-                          : "text-[#94A3B8] hover:bg-[#5D0A72]/10"
-                      }`}
-                    >
-                      {pageNum}
-                    </button>
-                  );
-                },
-              )}
-            </div>
+            {paginationItems()}
 
             <button
-              className={`p-1 rounded-md border border-[#5D0A72]/20 ${
-                currentPage === totalPages
-                  ? "text-[#94A3B8]/30 cursor-not-allowed"
-                  : "text-[#94A3B8] hover:bg-[#5D0A72]/10 cursor-pointer"
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages || totalPages === 0}
+              className={`px-3 py-1 rounded-md ${
+                currentPage === totalPages || totalPages === 0
+                  ? "bg-[#03001c]/50 text-[#94A3B8]/50 cursor-not-allowed"
+                  : "bg-[#03001c] text-[#94A3B8] hover:bg-[#0A004A]/50"
               }`}
-              onClick={() =>
-                currentPage < totalPages && handlePageChange(currentPage + 1)
-              }
-              disabled={currentPage === totalPages}
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <polyline points="9 18 15 12 9 6" />
-              </svg>
+              Next
             </button>
           </div>
         </div>
       </div>
     </div>
-
   );
 }
