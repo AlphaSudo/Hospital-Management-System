@@ -1,4 +1,6 @@
 import EgyptFlag from "../icons/EgyptFlag";
+import { ThemeToggle } from "./ThemeToggle";
+
 interface HeaderProps {
   title: string;
   icon?: React.ReactNode;
@@ -102,6 +104,9 @@ export function Header({
           </svg>
         </button>
 
+        {/* Theme Toggle */}
+        <ThemeToggle />
+        
         {/* Notification */}
         <div className="w-11 h-11 flex items-center justify-center rounded-full bg-[#05002E] border border-[#5D0A72]/10 shadow-md">
           <svg
