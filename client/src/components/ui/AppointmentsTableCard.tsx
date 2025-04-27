@@ -207,7 +207,7 @@ export default function AppointmentsTableCard({
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
-          handlePageChange={setCurrentPage}
+          handlePageChange={(page: number) => setCurrentPage(page)}
           itemsPerPage={itemsPerPage}
           setItemsPerPage={setItemsPerPage}
           totalItems={appointments.length}
