@@ -171,54 +171,7 @@ export default function AppointmentsPage() {
 
 
 
-  // Sort appointments
-  const sortedAppointments = useMemo(() => {
-    const sorted = [...appointments];
-
-    if (sortOrder === null || sortColumn === null) {
-      return sorted.sort((a, b) => a.id - b.id); // default sort
-    }
-
-    const sortMultiplier = sortOrder === "asc" ? 1 : -1;
-
-    return sorted.sort((a, b) => {
-      switch (sortColumn) {
-        case "id":
-          return sortMultiplier * (a.id - b.id);
-        case "patientName":
-          return sortMultiplier * a.patientName.localeCompare(b.patientName);
-        case "doctor":
-          return sortMultiplier * a.doctor.localeCompare(b.doctor);
-        case "gender":
-          return sortMultiplier * a.gender.localeCompare(b.gender);
-        case "date": {
-          const dateA = new Date(a.date).getTime();
-          const dateB = new Date(b.date).getTime();
-          return sortMultiplier * (dateA - dateB);
-        }
-        case "time": {
-          const [hoursA, minutesA] = a.time.split(":").map(Number);
-          const [hoursB, minutesB] = b.time.split(":").map(Number);
-          return sortMultiplier * ((hoursA * 60 + minutesA) - (hoursB * 60 + minutesB));
-        }
-        case "injury":
-          return sortMultiplier * a.issue.localeCompare(b.issue);
-        case "status":
-          return sortMultiplier * a.status.localeCompare(b.status);
-        case "visitType":
-          return sortMultiplier * a.visitType.localeCompare(b.visitType);
-        default:
-          return 0;
-      }
-    });
-  }, [appointments, sortColumn, sortOrder]);
-
-  const paginatedAppointments = useMemo(() => {
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    return sortedAppointments.slice(indexOfFirstItem, indexOfLastItem);
-  }, [sortedAppointments, currentPage, itemsPerPage]);
-
+  // Sorting and pagination are now handled in the AppointmentsTableCard component
 
 
 
