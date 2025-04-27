@@ -1,6 +1,10 @@
-import React from "react";
+import React, { ReactNode } from "react";
 
-const EgyptFlag: React.FC = () => {
+interface EgyptFlagProps {
+  children?: ReactNode;
+}
+
+const EgyptFlag: React.FC<EgyptFlagProps> = ({ children }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

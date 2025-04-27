@@ -157,17 +157,7 @@ export function Header({
             </svg>
           ) : (
             // Egypt Flag
-            <EgyptFlag>
-              {" "}
-              <circle
-                cx="50"
-                cy="50"
-                r="40"
-                stroke="black"
-                strokeWidth="3"
-                fill="red"
-              />
-            </EgyptFlag>
+            <EgyptFlag />
           )}
         </button>
         {/* User Profile */}
