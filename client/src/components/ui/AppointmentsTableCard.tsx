@@ -1,10 +1,8 @@
-import { useState, RefObject } from "react";
+import { useState, RefObject, useMemo, useEffect } from "react";
 import SortableHeader from "@/components/ui/SortableHeader";
 import * as XLSX from 'xlsx';
 import { useToast } from "@/hooks/use-toast";
 import { Appointment, ColumnToggle } from "@/components/types/appointment";
-
-
 
 interface AppointmentsTableCardProps {
   appointments: Appointment[];
@@ -54,7 +52,8 @@ export default function AppointmentsTableCard({
   initialAppointments,
 }: AppointmentsTableCardProps) {
   const { toast } = useToast();
-  const selectAll = selectedAppointments.length === appointments.length;
+  const [selectAll, setSelectAll] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleSortClick = (column: string) => {
     if (sortColumn === column) {
@@ -207,8 +206,79 @@ export default function AppointmentsTableCard({
   };
 
 
+  // Apply search filter first
+  const filteredAppointments = useMemo(() => {
+    if (!searchTerm.trim()) {
+      return appointments;
+    }
+    
+    const lowerCaseSearch = searchTerm.toLowerCase().trim();
+    
+    return appointments.filter(appointment => {
+      return (
+        appointment.patientName.toLowerCase().includes(lowerCaseSearch) ||
+        appointment.doctor.toLowerCase().includes(lowerCaseSearch) ||
+        appointment.issue.toLowerCase().includes(lowerCaseSearch) ||
+        appointment.status.toLowerCase().includes(lowerCaseSearch) ||
+        appointment.visitType.toLowerCase().includes(lowerCaseSearch) ||
+        appointment.email.toLowerCase().includes(lowerCaseSearch) ||
+        appointment.phone.toLowerCase().includes(lowerCaseSearch)
+      );
+    });
+  }, [appointments, searchTerm]);
+
+  // Then sort the filtered appointments
+  const sortedAppointments = useMemo(() => {
+    return [...filteredAppointments].sort((a, b) => {
+      if (sortOrder === null || sortColumn === null) {
+        return a.id - b.id; // Default sort by ID
+      }
+
+      const sortMultiplier = sortOrder === "asc" ? 1 : -1;
+
+      switch (sortColumn) {
+        case "id":
+          return sortMultiplier * (a.id - b.id);
+        case "patientName":
+          return sortMultiplier * a.patientName.localeCompare(b.patientName);
+        case "doctor":
+          return sortMultiplier * a.doctor.localeCompare(b.doctor);
+        case "gender":
+          return sortMultiplier * a.gender.localeCompare(b.gender);
+        case "date": {
+          // Convert dates for proper comparison (MM/DD/YYYY format)
+          const dateA = new Date(a.date).getTime();
+          const dateB = new Date(b.date).getTime();
+          return sortMultiplier * (dateA - dateB);
+        }
+        case "time": {
+          // Convert times for comparison
+          const timeA = a.time.split(":").map(Number);
+          const timeB = b.time.split(":").map(Number);
+          const minutesA = timeA[0] * 60 + timeA[1];
+          const minutesB = timeB[0] * 60 + timeB[1];
+          return sortMultiplier * (minutesA - minutesB);
+        }
+        case "injury":
+          return sortMultiplier * a.issue.localeCompare(b.issue);
+        case "status":
+          return sortMultiplier * a.status.localeCompare(b.status);
+        case "visitType":
+          return sortMultiplier * a.visitType.localeCompare(b.visitType);
+        default:
+          return 0;
+      }
+    });
+  }, [filteredAppointments, sortColumn, sortOrder]);
+
+  // Pagination calculations
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  
+  // Get current page of appointments
+  const currentAppointments = useMemo(() => {
+    return sortedAppointments.slice(indexOfFirstItem, indexOfLastItem);
+  }, [sortedAppointments, indexOfFirstItem, indexOfLastItem]);
 
   const totalPages = Math.ceil(sortedAppointments.length / itemsPerPage);
 
@@ -254,6 +324,11 @@ export default function AppointmentsTableCard({
               <input
                 type="text"
                 placeholder="Search"
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1); // Reset to first page when searching
+                }}
                 className="bg-[#02001E] text-sm py-2 pl-10 pr-4 rounded-lg text-[#94A3B8] placeholder-[#94A3B8]/50 focus:outline-none focus:ring-1 focus:ring-[#5D0A72]/50 border border-[#5D0A72]/10 w-full"
               />
             </div>
