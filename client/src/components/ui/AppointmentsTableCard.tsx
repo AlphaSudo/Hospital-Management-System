@@ -82,11 +82,12 @@ export default function AppointmentsTableCard({
   });
 
   const handleSelectAll = useCallback(() => {
+    // Select ALL appointments, not just the current page
     setSelectedAppointments(
-      selectAll ? [] : currentAppointments.map((appointment) => appointment.id)
+      selectAll ? [] : appointments.map((appointment) => appointment.id)
     );
     setSelectAll(!selectAll);
-  }, [selectAll, currentAppointments, setSelectedAppointments]);
+  }, [selectAll, appointments, setSelectedAppointments]);
 
   const handleSelectAppointment = useCallback(
     (id: number) => {
@@ -104,6 +105,8 @@ export default function AppointmentsTableCard({
 
     setAppointments(appointments.filter((appointment) => !selectedAppointments.includes(appointment.id)));
     setSelectedAppointments([]);
+    // Reset the selectAll checkbox state
+    setSelectAll(false);
 
     toast({
       title: 'Appointments Deleted',
@@ -111,7 +114,7 @@ export default function AppointmentsTableCard({
       variant: 'destructive',
       className: 'bg-[#450A0A] border border-red-700/50 text-white',
     });
-  }, [appointments, selectedAppointments, setAppointments, setSelectedAppointments, toast]);
+  }, [appointments, selectedAppointments, setAppointments, setSelectedAppointments, setSelectAll, toast]);
 
   const columnConfig = [
     { id: 'name', key: 'patientName', label: 'Name' },
