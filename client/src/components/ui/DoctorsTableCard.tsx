@@ -1,19 +1,19 @@
-import { useState, useCallback , Dispatch, SetStateAction } from "react";
+import { useState, useCallback, Dispatch, SetStateAction } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { Appointment, ColumnToggle } from "@/components/types/appointment";
+import { Doctor, ColumnToggle } from "@/components/types/doctor";
 import SortableHeader from "@/components/ui/SortableHeader";
-import { useAppointmentsTable } from "@/hooks/useAppointmentsTable";
+import { useDoctorsTable } from "@/hooks/useDoctorsTable";
 import { SearchBar } from "@/components/ui/SearchBar";
 import { ActionButtons } from "@/components/ui/ActionButtons";
 import { ColumnSelector } from "@/components/ui/ColumnSelector";
-import { TableRow } from "@/components/ui/TableRow";
+import { DoctorTableRow } from "./DoctorTableRow";
 import { Pagination } from "@/components/ui/Pagination";
 
-interface AppointmentsTableCardProps {
-  appointments: Appointment[];
-  setAppointments: (appointments: Appointment[]) => void;
-  selectedAppointments: number[];
-  setSelectedAppointments: Dispatch<SetStateAction<number[]>>;
+interface DoctorsTableCardProps {
+  doctors: Doctor[];
+  setDoctors: (doctors: Doctor[]) => void;
+  selectedDoctors: number[];
+  setSelectedDoctors: (ids: number[]) => void;
   columns: ColumnToggle[];
   setColumns: (columns: ColumnToggle[]) => void;
   showColumnSelector: boolean;
@@ -28,16 +28,16 @@ interface AppointmentsTableCardProps {
   itemsPerPage: number;
   setItemsPerPage: Dispatch<SetStateAction<number>>;
   onAddClick: () => void;
-  onEditClick: (appointment: Appointment) => void;
+  onEditClick: (doctor: Doctor) => void;
   onDeleteClick: (id: number) => void;
-  initialAppointments: Appointment[];
+  initialDoctors: Doctor[];
 }
 
-export default function AppointmentsTableCard({
-  appointments,
-  setAppointments,
-  selectedAppointments,
-  setSelectedAppointments,
+export default function DoctorsTableCard({
+  doctors,
+  setDoctors,
+  selectedDoctors,
+  setSelectedDoctors,
   columns,
   setColumns,
   showColumnSelector,
@@ -54,23 +54,23 @@ export default function AppointmentsTableCard({
   onAddClick,
   onEditClick,
   onDeleteClick,
-  initialAppointments,
-}: AppointmentsTableCardProps) {
+  initialDoctors,
+}: DoctorsTableCardProps) {
   const { toast } = useToast();
   const [selectAll, setSelectAll] = useState(false);
 
   const {
     searchTerm,
     setSearchTerm,
-    currentAppointments,
+    currentDoctors,
     totalPages,
     handleSortClick,
     handleRefreshTable,
     handleXlsxDownload,
-  } = useAppointmentsTable({
-    appointments,
-    setAppointments,
-    initialAppointments,
+  } = useDoctorsTable({
+    doctors,
+    setDoctors,
+    initialDoctors,
     sortColumn,
     setSortColumn,
     sortOrder,
@@ -79,56 +79,53 @@ export default function AppointmentsTableCard({
     setCurrentPage,
     itemsPerPage,
     setItemsPerPage,
-    setSelectedAppointments,
-    setSelectAll
   });
 
   const handleSelectAll = useCallback(() => {
-    // Select ALL appointments, not just the current page
-    setSelectedAppointments(
-      selectAll ? [] : appointments.map((appointment) => appointment.id)
+    // Select ALL doctors, not just the current page
+    setSelectedDoctors(
+      selectAll ? [] : doctors.map((doctor) => doctor.id)
     );
     setSelectAll(!selectAll);
-  }, [selectAll, appointments, setSelectedAppointments]);
+  }, [selectAll, doctors, setSelectedDoctors]);
 
-  const handleSelectAppointment = useCallback(
+  const handleSelectDoctor = useCallback(
     (id: number) => {
-      setSelectedAppointments(
-        selectedAppointments.includes(id)
-          ? selectedAppointments.filter((appointmentId) => appointmentId !== id)
-          : [...selectedAppointments, id]
+      setSelectedDoctors(
+        selectedDoctors.includes(id)
+          ? selectedDoctors.filter((doctorId) => doctorId !== id)
+          : [...selectedDoctors, id]
       );
     },
-    [selectedAppointments, setSelectedAppointments]
+    [selectedDoctors, setSelectedDoctors]
   );
 
   const handleBulkDelete = useCallback(() => {
-    if (selectedAppointments.length === 0) return;
+    if (selectedDoctors.length === 0) return;
 
-    setAppointments(appointments.filter((appointment) => !selectedAppointments.includes(appointment.id)));
-    setSelectedAppointments([]);
+    setDoctors(doctors.filter((doctor) => !selectedDoctors.includes(doctor.id)));
+    setSelectedDoctors([]);
     // Reset the selectAll checkbox state
     setSelectAll(false);
 
     toast({
-      title: 'Appointments Deleted',
-      description: `${selectedAppointments.length} appointment${selectedAppointments.length > 1 ? 's' : ''} successfully removed.`,
+      title: 'Doctors Deleted',
+      description: `${selectedDoctors.length} doctor${selectedDoctors.length > 1 ? 's' : ''} successfully removed.`,
       variant: 'destructive',
       className: 'bg-[#450A0A] border border-red-700/50 text-white',
     });
-  }, [appointments, selectedAppointments, setAppointments, setSelectedAppointments, setSelectAll, toast]);
+  }, [doctors, selectedDoctors, setDoctors, setSelectedDoctors, setSelectAll, toast]);
 
   const columnConfig = [
-    { id: 'name', key: 'patientName', label: 'Name' },
-    { id: 'doctor', key: 'doctor', label: 'Doctor' },
-    { id: 'gender', key: 'gender', label: 'Gender' },
-    { id: 'date', key: 'date', label: 'Date' },
-    { id: 'time', key: 'time', label: 'Time' },
-    { id: 'mobile', key: 'phone', label: 'Mobile', sortable: false },
-    { id: 'injury', key: 'issue', label: 'Injury' },
+    { id: 'name', key: 'name', label: 'Name' },
+    { id: 'department', key: 'department', label: 'Department' },
+    { id: 'specialization', key: 'specialization', label: 'Specialization' },
+    { id: 'availability', key: 'availability', label: 'Availability' },
+    { id: 'mobile', key: 'mobile', label: 'Mobile', sortable: false },
+    { id: 'degree', key: 'degree', label: 'Degree' },
+    { id: 'experience', key: 'experience', label: 'Experience (Years)' },
+    { id: 'consultationFee', key: 'consultationFee', label: 'Consultation Fee' },
     { id: 'email', key: 'email', label: 'Email', sortable: false },
-    { id: 'status', key: 'status', label: 'Status' },
-    { id: 'visitType', key: 'visitType', label: 'Visit Type' },
   ];
 
   return (
@@ -140,7 +137,7 @@ export default function AppointmentsTableCard({
         <div className="p-5 flex items-center justify-between border-b border-[#5D0A72]/10">
           <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} setCurrentPage={setCurrentPage} />
           <ActionButtons
-            selectedAppointments={selectedAppointments}
+            selectedAppointments={selectedDoctors} // Reusing the same component with different props
             handleBulkDelete={handleBulkDelete}
             handleRefreshTable={handleRefreshTable}
             handleXlsxDownload={handleXlsxDownload}
@@ -165,7 +162,7 @@ export default function AppointmentsTableCard({
                     checked={selectAll}
                     onChange={handleSelectAll}
                     className="rounded border-[#5D0A72]/30 text-[#5D0A72] focus:ring-[#5D0A72]/30 h-4 w-4"
-                    aria-label="Select all appointments"
+                    aria-label="Select all doctors"
                   />
                 </th>
                 {columnConfig.map(
@@ -190,13 +187,13 @@ export default function AppointmentsTableCard({
               </tr>
             </thead>
             <tbody className="divide-y divide-[#5D0A72]/10">
-              {currentAppointments.length > 0 ? (
-                currentAppointments.map((appointment) => (
-                  <TableRow
-                    key={appointment.id}
-                    appointment={appointment}
-                    selectedAppointments={selectedAppointments}
-                    handleSelectAppointment={handleSelectAppointment}
+              {currentDoctors.length > 0 ? (
+                currentDoctors.map((doctor) => (
+                  <DoctorTableRow
+                    key={doctor.id}
+                    doctor={doctor}
+                    selectedDoctors={selectedDoctors}
+                    handleSelectDoctor={handleSelectDoctor}
                     onEditClick={onEditClick}
                     onDeleteClick={onDeleteClick}
                     columns={columns}
@@ -205,7 +202,7 @@ export default function AppointmentsTableCard({
               ) : (
                 <tr className="text-center">
                   <td colSpan={columnConfig.length + 2} className="py-6 text-[#94A3B8]">
-                    {searchTerm.trim() ? 'No appointments matching your search' : 'No appointments available'}
+                    {searchTerm.trim() ? 'No doctors matching your search' : 'No doctors available'}
                   </td>
                 </tr>
               )}
@@ -218,11 +215,9 @@ export default function AppointmentsTableCard({
           handlePageChange={setCurrentPage}
           itemsPerPage={itemsPerPage}
           setItemsPerPage={setItemsPerPage}
-          totalItems={appointments.length}
+          totalItems={doctors.length}
         />
       </div>
     </div>
   );
 }
-
-

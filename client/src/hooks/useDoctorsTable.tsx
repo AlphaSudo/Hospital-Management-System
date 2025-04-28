@@ -1,12 +1,12 @@
 import { useState, useMemo, useCallback, Dispatch, SetStateAction } from "react";
 import * as XLSX from 'xlsx';
 import { useToast } from "@/hooks/use-toast";
-import { Appointment } from "@/components/types/appointment";
+import { Doctor } from "@/components/types/doctor";
 
-interface UseAppointmentsTableProps {
-  appointments: Appointment[];
-  setAppointments: (appointments: Appointment[]) => void;
-  initialAppointments: Appointment[];
+interface UseDoctorsTableProps {
+  doctors: Doctor[];
+  setDoctors: (doctors: Doctor[]) => void;
+  initialDoctors: Doctor[];
   sortColumn: string | null;
   setSortColumn: (column: string | null) => void;
   sortOrder: 'asc' | 'desc' | null;
@@ -15,14 +15,12 @@ interface UseAppointmentsTableProps {
   setCurrentPage: Dispatch<SetStateAction<number>>;
   itemsPerPage: number;
   setItemsPerPage: Dispatch<SetStateAction<number>>;
-  setSelectedAppointments: Dispatch<SetStateAction<number[]>>;
-  setSelectAll: Dispatch<SetStateAction<boolean>>;
 }
 
-export const useAppointmentsTable = ({
-  appointments,
-  setAppointments,
-  initialAppointments,
+export const useDoctorsTable = ({
+  doctors,
+  setDoctors,
+  initialDoctors,
   sortColumn,
   setSortColumn,
   sortOrder,
@@ -31,55 +29,52 @@ export const useAppointmentsTable = ({
   setCurrentPage,
   itemsPerPage,
   setItemsPerPage,
-  setSelectedAppointments,
-  setSelectAll,
-}: UseAppointmentsTableProps) => {
+}: UseDoctorsTableProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const { toast } = useToast();
 
-  const filteredAppointments = useMemo(() => {
-    if (!searchTerm.trim()) return appointments;
+  const filteredDoctors = useMemo(() => {
+    if (!searchTerm.trim()) return doctors;
 
     const lowerCaseSearch = searchTerm.toLowerCase().trim();
-    return appointments.filter((appointment) =>
-      Object.values(appointment).some(
+    return doctors.filter((doctor) =>
+      Object.values(doctor).some(
         (value) => typeof value === 'string' && value.toLowerCase().includes(lowerCaseSearch)
       )
     );
-  }, [appointments, searchTerm]);
+  }, [doctors, searchTerm]);
 
-  const sortedAppointments = useMemo(() => {
-    return [...filteredAppointments].sort((a, b) => {
+  const sortedDoctors = useMemo(() => {
+    return [...filteredDoctors].sort((a, b) => {
       if (!sortOrder || !sortColumn) return a.id - b.id;
 
       const multiplier = sortOrder === 'asc' ? 1 : -1;
       switch (sortColumn) {
         case 'id':
           return multiplier * (a.id - b.id);
-        case 'patientName':
-        case 'doctor':
-        case 'gender':
-        case 'issue':
-        case 'status':
-        case 'visitType':
+        case 'name':
+        case 'department':
+        case 'specialization':
+        case 'availability':
+        case 'degree':
+        case 'mobile':
+        case 'email':
           return multiplier * a[sortColumn].localeCompare(b[sortColumn]);
-        case 'date':
-          return multiplier * (new Date(a.date).getTime() - new Date(b.date).getTime());
-        case 'time':
-          const [hoursA, minutesA] = a.time.split(':').map(Number);
-          const [hoursB, minutesB] = b.time.split(':').map(Number);
-          return multiplier * (hoursA * 60 + minutesA - (hoursB * 60 + minutesB));
+        case 'experience':
+          return multiplier * (a.experience - b.experience);
+        case 'consultationFee':
+          return multiplier * (a.consultationFee - b.consultationFee);
         default:
           return 0;
       }
     });
-  }, [filteredAppointments, sortColumn, sortOrder]);
+  }, [filteredDoctors, sortColumn, sortOrder]);
 
-  const totalPages = Math.ceil(sortedAppointments.length / itemsPerPage);
-  const currentAppointments = useMemo(() => {
+  const totalPages = Math.ceil(sortedDoctors.length / itemsPerPage);
+  const currentDoctors = useMemo(() => {
     const start = (currentPage - 1) * itemsPerPage;
-    return sortedAppointments.slice(start, start + itemsPerPage);
-  }, [sortedAppointments, currentPage, itemsPerPage]);
+    return sortedDoctors.slice(start, start + itemsPerPage);
+  }, [sortedDoctors, currentPage, itemsPerPage]);
 
   const handleSortClick = useCallback((column: string) => {
     if (sortColumn === column) {
@@ -101,44 +96,40 @@ export const useAppointmentsTable = ({
   }, [sortColumn, sortOrder, setSortColumn, setSortOrder]);
 
   const handleRefreshTable = useCallback(() => {
-    setAppointments(initialAppointments);
+    setDoctors(initialDoctors);
     setCurrentPage(1);
     setSortColumn(null);
     setSortOrder(null);
     setSearchTerm('');
-    setItemsPerPage(5);
-    setSelectedAppointments([]);
-    setSelectAll(false);
     toast({
       title: 'Table Refreshed',
-      description: 'Appointments data has been refreshed.',
+      description: 'Doctors data has been refreshed.',
       className: 'bg-[#05002E] border border-[#5D0A72]/20 text-white',
     });
-  }, [initialAppointments, setAppointments, setCurrentPage, setSortColumn, setSortOrder, toast]);
+  }, [initialDoctors, setDoctors, setCurrentPage, setSortColumn, setSortOrder, toast]);
 
   const handleXlsxDownload = useCallback(() => {
     try {
-      const exportData = sortedAppointments.map((appointment) => ({
-        'Patient Name': appointment.patientName,
-        Doctor: appointment.doctor,
-        Gender: appointment.gender,
-        Date: appointment.date,
-        Time: appointment.time,
-        Phone: appointment.phone,
-        Issue: appointment.issue,
-        Email: appointment.email,
-        Status: appointment.status,
-        'Visit Type': appointment.visitType,
+      const exportData = sortedDoctors.map((doctor) => ({
+        'Name': doctor.name,
+        'Department': doctor.department,
+        'Specialization': doctor.specialization,
+        'Availability': doctor.availability,
+        'Mobile': doctor.mobile,
+        'Degree': doctor.degree,
+        'Experience (Years)': doctor.experience,
+        'Consultation Fee': doctor.consultationFee,
+        'Email': doctor.email,
       }));
 
       const worksheet = XLSX.utils.json_to_sheet(exportData);
       const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, 'Appointments');
-      XLSX.writeFile(workbook, 'Cliniva_Appointments.xlsx');
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Doctors');
+      XLSX.writeFile(workbook, 'Cliniva_Doctors.xlsx');
 
       toast({
         title: 'Export Successful',
-        description: 'Appointments data has been exported to Excel.',
+        description: 'Doctors data has been exported to Excel.',
         className: 'bg-[#05002E] border border-[#5D0A72]/20 text-white',
       });
     } catch (error) {
@@ -149,14 +140,14 @@ export const useAppointmentsTable = ({
       });
       console.error('Export error:', error);
     }
-  }, [sortedAppointments, toast]);
+  }, [sortedDoctors, toast]);
 
   return {
     searchTerm,
     setSearchTerm,
-    filteredAppointments,
-    sortedAppointments,
-    currentAppointments,
+    filteredDoctors,
+    sortedDoctors,
+    currentDoctors,
     totalPages,
     handleSortClick,
     handleRefreshTable,
