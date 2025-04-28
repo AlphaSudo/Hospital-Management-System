@@ -15,14 +15,20 @@ export const TableRow = memo(
   ({ appointment, selectedAppointments, handleSelectAppointment, onEditClick, onDeleteClick, columns }: TableRowProps) => (
     <tr
       className="text-[#94A3B8] hover:bg-[#02001e]/30 transition-colors even:bg-[#000041] cursor-pointer"
-      onClick={() => onEditClick(appointment)}
+      onClick={(e) => {
+        // Only open edit form if click is not on a checkbox or button
+        if (!e.defaultPrevented) {
+          onEditClick(appointment);
+        }
+      }}
     >
-      <td className="py-4 px-6">
+      <td className="py-4 px-6" onClick={(e) => e.preventDefault()}>
         <input
           type="checkbox"
           checked={selectedAppointments.includes(appointment.id)}
           onChange={(e) => {
-            e.stopPropagation(); // Prevent opening edit form
+            e.preventDefault(); // Mark as handled
+            e.stopPropagation(); // Prevent row click 
             handleSelectAppointment(appointment.id);
           }}
           className="rounded border-[#5D0A72]/30 text-[#5D0A72] focus:ring-[#5D0A72]/30 h-4 w-4"
@@ -90,11 +96,12 @@ export const TableRow = memo(
           </div>
         </td>
       )}
-      <td className="py-4 px-6 text-center">
+      <td className="py-4 px-6 text-center" onClick={(e) => e.preventDefault()}>
         <div className="flex items-center justify-center gap-3">
           <button
             onClick={(e) => {
-              e.stopPropagation();
+              e.preventDefault(); // Mark as handled
+              e.stopPropagation(); // Prevent row click
               onEditClick(appointment);
             }}
             className="text-blue-500 hover:text-blue-700 transition-colors"
@@ -115,7 +122,8 @@ export const TableRow = memo(
           </button>
           <button
             onClick={(e) => {
-              e.stopPropagation();
+              e.preventDefault(); // Mark as handled
+              e.stopPropagation(); // Prevent row click
               onDeleteClick(appointment.id);
             }}
             className="text-red-500 hover:text-red-700 transition-colors"
