@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback , Dispatch, SetStateAction } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Appointment, ColumnToggle } from "@/components/types/appointment";
 import SortableHeader from "@/components/ui/SortableHeader";
@@ -24,9 +24,9 @@ interface AppointmentsTableCardProps {
   sortOrder: 'asc' | 'desc' | null;
   setSortOrder: (order: 'asc' | 'desc' | null) => void;
   currentPage: number;
-  setCurrentPage: (page: number) => void;
+  setCurrentPage: Dispatch<SetStateAction<number>>;
   itemsPerPage: number;
-  setItemsPerPage: (items: number) => void;
+  setItemsPerPage: Dispatch<SetStateAction<number>>;
   onAddClick: () => void;
   onEditClick: (appointment: Appointment) => void;
   onDeleteClick: (id: number) => void;
@@ -127,7 +127,10 @@ export default function AppointmentsTableCard({
   ];
 
   return (
-    <div className="p-[2px] rounded-2xl bg-conic-gradient shadow-[0_4px_8px_rgba(7,47,147,0.3),0_0_12px_rgba(14,130,234,0.4)] grid">
+    <div className="p-0.5 rounded-[1rem] 
+   bg-[conic-gradient(#072f93_0deg,#03115e_45deg,#031b78_90deg,#0f42c1_135deg,#021a70_180deg,#031a63_225deg,#0a70d2_270deg,#0e82ea_315deg,#072f93_360deg)]
+   grid 
+   shadow-[0_4px_8px_rgba(7,47,147,0.3),0_0_12px_rgba(14,130,234,0.4)]">
       <div className="bg-[#05002E] rounded-xl overflow-hidden shadow-[inset_0_2px_4px_rgba(3,17,94,0.6),inset_0_-2px_6px_rgba(2,26,112,0.8)]">
         <div className="p-5 flex items-center justify-between border-b border-[#5D0A72]/10">
           <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} setCurrentPage={setCurrentPage} />
@@ -207,7 +210,7 @@ export default function AppointmentsTableCard({
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
-          handlePageChange={(page: number) => setCurrentPage(page)}
+          handlePageChange={setCurrentPage}
           itemsPerPage={itemsPerPage}
           setItemsPerPage={setItemsPerPage}
           totalItems={appointments.length}
@@ -216,3 +219,5 @@ export default function AppointmentsTableCard({
     </div>
   );
 }
+
+

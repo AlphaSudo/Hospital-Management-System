@@ -1,6 +1,6 @@
 import { memo } from "react";
 import { Appointment, ColumnToggle } from "@/components/types/appointment";
-import { AVATAR_BG, STATUS_COLORS } from "@/utils/constants";
+import { AVATAR_BG, STATUS_COLORS } from "@/components/utils/constants";
 
 interface TableRowProps {
   appointment: Appointment;

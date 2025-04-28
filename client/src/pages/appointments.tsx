@@ -259,8 +259,8 @@ export default function AppointmentsPage() {
           setLanguage={setLanguage}
         />
 
-        {/* Appointments Content */}
-        <div className="flex-1 px-8 py-8 bg-[#040223]">
+        {/* Appointments Content bg-[#040223]*/}
+        <div className="flex-1 px-8 py-8 ">
           {/* Breadcrumbs and Title */}
           <div className="mb-6">
             <h1 className="text-2xl font-bold text-white">View Appointments</h1>

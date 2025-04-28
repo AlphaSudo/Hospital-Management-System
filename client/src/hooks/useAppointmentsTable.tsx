@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, Dispatch, SetStateAction } from "react";
 import * as XLSX from 'xlsx';
 import { useToast } from "@/hooks/use-toast";
 import { Appointment } from "@/components/types/appointment";
@@ -12,9 +12,9 @@ interface UseAppointmentsTableProps {
   sortOrder: 'asc' | 'desc' | null;
   setSortOrder: (order: 'asc' | 'desc' | null) => void;
   currentPage: number;
-  setCurrentPage: (page: number) => void;
+  setCurrentPage: Dispatch<SetStateAction<number>>;
   itemsPerPage: number;
-  setItemsPerPage: (items: number) => void;
+  setItemsPerPage: Dispatch<SetStateAction<number>>;
 }
 
 export const useAppointmentsTable = ({
@@ -78,8 +78,22 @@ export const useAppointmentsTable = ({
   }, [sortedAppointments, currentPage, itemsPerPage]);
 
   const handleSortClick = useCallback((column: string) => {
-    setSortColumn(column);
-    setSortOrder(sortColumn === column && sortOrder === 'asc' ? 'desc' : 'asc');
+    if (sortColumn === column) {
+      // Cycle through: asc -> desc -> null (unsorted)
+      if (sortOrder === 'asc') {
+        setSortOrder('desc');
+      } else if (sortOrder === 'desc') {
+        setSortOrder(null);
+        setSortColumn(null);
+      } else {
+        setSortOrder('asc');
+        setSortColumn(column);
+      }
+    } else {
+      // New column selected, start with ascending sort
+      setSortColumn(column);
+      setSortOrder('asc');
+    }
   }, [sortColumn, sortOrder, setSortColumn, setSortOrder]);
 
   const handleRefreshTable = useCallback(() => {
