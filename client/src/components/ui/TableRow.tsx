@@ -21,7 +21,10 @@ export const TableRow = memo(
         <input
           type="checkbox"
           checked={selectedAppointments.includes(appointment.id)}
-          onChange={() => handleSelectAppointment(appointment.id)}
+          onChange={(e) => {
+            e.stopPropagation(); // Prevent opening edit form
+            handleSelectAppointment(appointment.id);
+          }}
           className="rounded border-[#5D0A72]/30 text-[#5D0A72] focus:ring-[#5D0A72]/30 h-4 w-4"
           aria-label={`Select appointment ${appointment.id}`}
         />

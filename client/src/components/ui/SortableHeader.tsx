@@ -16,7 +16,7 @@ const SortableHeader: React.FC<SortableHeaderProps> = ({
   const isActive = sortColumn === columnKey;
 
   return (
-    <div className="flex items-center gap-1 cursor-pointer" onClick={() => onSort(columnKey)}>
+    <div className="flex items-center gap-1 cursor-pointer group" onClick={() => onSort(columnKey)}>
       {label}
 
       <span className="flex items-center">
