@@ -5,11 +5,23 @@ import  DoctorWhiteCoatIcon  from '../icons/DoctorWhiteCoatIcon.tsx';
 import DepartmentIcon from '../icons/DepartmentIcon.tsx';
 import AppointmentsIcon from '../icons/AppointmentIcon.tsx';
 import ReportIcon from '../icons/ReportIcon.tsx';
+import PatientIcon from '../icons/PatientIcon.tsx';
 import ChartIcon from '../icons/ChartIcon.tsx';
+import StaffIcon from "../icons/StaffIcon.tsx";
+import { BirthRecordsIcon } from "../icons/BirthRecordsIcon.tsx";
+import  DeathRecordsIcon  from "../icons/DeathRecordsIcon.tsx";
+import {AppWindowIcon}  from "lucide-react";
+import CheckListIcon from '../icons/CheckListIcon.tsx';
+
 interface NavigationItem {
   name: string;
   path: string;
   icon: React.ReactNode;
+  subItems?: {
+    name: string;
+    path: string;
+    icon: React.ReactNode;
+  }[];
 }
 
 interface SidebarProps {
@@ -17,9 +29,19 @@ interface SidebarProps {
 }
 
 export function Sidebar({ isOpen = true }: SidebarProps) {
+  const RoomIcon = () => (
+        <svg width="32px" height="32px" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" 
+        stroke="#ebebef" transform="matrix(1, 0, 0, 1, 0, 0)">
+        <g id="SVGRepo_bgCarrier" stroke-width="0"/>
+        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+        <g id="SVGRepo_iconCarrier"> <path d="M2 2H0V14H2V12H14V14H16V9C16 7.34315 14.6569 6 13 6H6C6 4.89543 5.10457 4 4 4H2V2Z" 
+        fill="#2e3885"/> </g>
+        </svg>
+    );
   // Define a compact width for icons-only mode
   const sidebarWidth = isOpen ? 'w-[250px]' : 'w-[70px]';
   const [location] = useLocation();
+  const [openItem, setOpenItem] = useState<string | null>(null);
 
   const navigationItems: NavigationItem[] = [
     {
@@ -51,10 +73,65 @@ export function Sidebar({ isOpen = true }: SidebarProps) {
       ),
     },
     {
-      name: "Reports",
-      path: "/reports",
+      name: "Patients",
+      path: "/patients",
+      icon: (
+        <PatientIcon className="h-8 w-8 
+        
+          "/>
+      ),
+    },
+    {
+      name: "Staff",
+      path: "/staff",
+      icon: (
+        <StaffIcon className="h-8 w-8"
+          />
+      ),
+    },
+    {
+      name: "Records",
+      path: "/records",
       icon: (
        <ReportIcon className="h-8 w-8"/>
+      ),
+      subItems: [
+        {
+          name: "Birth Records",
+          path: "/records/birth",
+          icon: (
+            <BirthRecordsIcon className="h-8 w-8"/>
+          ),
+        },
+        {
+          name: "Death Records",
+          path: "/records/death",
+          icon: (
+            <DeathRecordsIcon className="h-8 w-8"/>
+          ),
+        }
+      ]
+    },
+    {
+      name: "Calendar",
+      path: "/calendar",
+      icon: (
+        <AppWindowIcon className="h-8 w-8  text-blue-500"/>
+      ),
+    },
+    {
+      name: "Tasks",
+      path: "/tasks",
+      icon: (
+        <CheckListIcon className="h-8 w-8 text-[#31A8FF] bg-clip-text text-transparent"/>
+        
+          ),
+    },
+    {
+      name: "Rooms",
+      path: "/rooms",
+      icon: (
+        <RoomIcon />
       ),
     },
   ];
@@ -135,55 +212,100 @@ export function Sidebar({ isOpen = true }: SidebarProps) {
 
       {/* Navigation - Full Version */}
       {isOpen && (
-        <div className="flex-1 flex flex-col gap-2 px-5 transition-opacity duration-300">
+        <div className="flex-1 flex flex-col gap-2 px-5 transition-opacity duration-300 overflow-y-scroll ">
+          <style>
+            {`
+              div::-webkit-scrollbar {
+                display: none; /* Chrome, Safari, Opera */
+              }
+            `}
+          </style>
           {navigationItems.map((item) => (
-            <Link key={item.name} href={item.path}>
-              <span
-                className={cn(
-                  "py-3.5 px-4 flex items-center gap-3.5 hover:bg-[#5D0A72]/20 rounded-xl transition cursor-pointer",
-                  location === item.path ? "active-nav" : "",
-                )}
-              >
+            <div key={item.name}>
+              {item.subItems ? (
                 <span
-                  className={
-                    location === item.path
-                      ? "text-[#FF8AFF]"
-                      : "text-[#31A8FF] bg-clip-text text-transparent"
-                  }
-                >
-                  {item.icon}
-                </span>
-                <span
+                  onClick={() => setOpenItem(openItem === item.name ? null : item.name)}
                   className={cn(
-                    "font-medium text-sm",
-                    location === item.path
-                      ? "text-[#FF8AFF]"
-                      : "text-[#FDFEFB]",
+                    "py-3.5 px-4 flex items-center gap-3.5 hover:bg-[#5D0A72]/20 rounded-xl transition cursor-pointer",
+                    openItem === item.name ? "active-nav" : "",
                   )}
                 >
-                  {item.name}
+                  <span
+                    className={cn(
+                      "text-[#31A8FF] bg-clip-text text-transparent",
+                      openItem === item.name ? "text-[#FF8AFF]" : "",
+                    )}
+                  >
+                    {item.icon}
+                  </span>
+                  <span
+                    className={cn(
+                      "font-medium text-sm",
+                      openItem === item.name ? "text-[#FF8AFF]" : "text-[#FDFEFB]",
+                    )}
+                  >
+                    {item.name}
+                  </span>
                 </span>
-              </span>
-            </Link>
+              ) : (
+                <Link href={item.path}>
+                  <span
+                    className={cn(
+                      "py-3.5 px-4 flex items-center gap-3.5 hover:bg-[#5D0A72]/20 rounded-xl transition cursor-pointer",
+                      location === item.path ? "active-nav" : "",
+                    )}
+                  >
+                    <span
+                      className={
+                        location === item.path
+                          ? "text-[#FF8AFF]"
+                          : "text-[#31A8FF] bg-clip-text text-transparent"
+                      }
+                    >
+                      {item.icon}
+                    </span>
+                    <span
+                      className={cn(
+                        "font-medium text-sm",
+                        location === item.path
+                          ? "text-[#FF8AFF]"
+                          : "text-[#FDFEFB]",
+                      )}
+                    >
+                      {item.name}
+                    </span>
+                  </span>
+                </Link>
+              )}
+              {item.subItems && openItem === item.name && (
+                <div className="pl-8">
+                  {item.subItems.map((subItem) => (
+                    <Link key={subItem.name} href={subItem.path}>
+                      <span
+                        className={cn(
+                          "py-3.5 px-4 flex items-center gap-3.5 hover:bg-[#5D0A72]/20 rounded-xl transition cursor-pointer",
+                          location === subItem.path ? "active-nav" : "",
+                        )}
+                      >
+                        <span
+                          className={cn(
+                            "font-medium text-sm",
+                            location === subItem.path
+                              ? "text-[#FF8AFF]"
+                              : "text-[#FDFEFB]",
+                          )}
+                        >
+                          {subItem.name}
+                        </span>
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
           ))}
   
-          <div className="mt-auto mb-8 py-3.5 px-4 flex items-center gap-3 hover:bg-[#5D0A72]/20 rounded-xl transition cursor-pointer">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 text-[#94A3B8]/80"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-            </svg>
-            <span className="font-medium text-sm text-[#94A3B8]/80">
-              Dark Mode
-            </span>
-          </div>
+          
         </div>
       )}
       

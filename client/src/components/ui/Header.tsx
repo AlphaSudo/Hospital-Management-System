@@ -18,8 +18,17 @@ export function Header({
   language,
   setLanguage,
 }: HeaderProps) {
+   // Define sidebar widths based on the state
+  const sidebarWidth = sidebarOpen ? '250px' : '70px';
+  const headerHeight = '3rem'; // Corresponds to h-24
   return (
-    <header className="h-24 px-8 flex items-center justify-between border-b border-[#5D0A72]/10">
+    <header className="h-12 px-8 flex items-center justify-between border-b border-[#5D0A72]/10 fixed top-0 z-50 bg-[#040223] gradient-bg-background transition-all duration-300 ease-in-out"// Added transition
+    style={{
+        left: sidebarWidth, // Set left based on sidebar width
+        width: `calc(100% - ${sidebarWidth})`, // Calculate width dynamically
+        height: headerHeight, // Explicit height if needed, though h-24 should work
+      }}
+    >
       {/* Left side: sidebar toggle + title */}
       <div className="flex items-center gap-3">
         <button

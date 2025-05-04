@@ -1,193 +1,276 @@
-import { useState, useRef, useCallback, useEffect } from "react";
-import { useToast } from "@/hooks/use-toast";
-import { Doctor, ColumnToggle } from "@/components/types/doctor";
-import DoctorsTableCard from "@/components/ui/DoctorsTableCard";
-import { DoctorFormModal } from "@/components/ui/DoctorFormModal";
-import { DeleteConfirmationDialog } from "@/components/ui/DeleteConfirmationDialog";
-import { initialDoctors } from "@/components/data/initialDoctors";
-import { Header } from "@/components/ui/Header";
-import { Sidebar } from "@/components/ui/sidebar";
-import { useTheme } from "@/lib/ThemeContext";
+      import { useState, useRef, useEffect } from "react";
+      import { useToast } from "@/hooks/use-toast";
+      import { Doctor, ColumnToggle } from "@/components/types/doctor";
+      import  GenericTableCard  from "@/components/ui/GenericTableCard";
+      import { GenericFormModal, FieldConfig } from "@/components/ui/GenericFormModal";
+      import { DeleteConfirmationDialog } from "@/components/ui/DeleteConfirmationDialog";
+      import { initialDoctors } from "@/components/data/initialDoctors";
+      import { Header } from "@/components/ui/Header";
+      import { Sidebar } from "@/components/ui/sidebar";
+      import { useTheme } from "@/lib/ThemeContext";
+      import { TruncatedWithTooltip } from "@/components/utils/constants";
+import DoctorWhiteCoatIcon from "@/components/icons/DoctorWhiteCoatIcon";
 
-export default function DoctorsPage() {
-  const [doctors, setDoctors] = useState<Doctor[]>(initialDoctors);
-  const [selectedDoctors, setSelectedDoctors] = useState<number[]>([]);
-  const [showColumnSelector, setShowColumnSelector] = useState(false);
-  const [formModalOpen, setFormModalOpen] = useState(false);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [doctorToDelete, setDoctorToDelete] = useState<number | null>(null);
-  const [formData, setFormData] = useState<Partial<Doctor>>({});
-  const [isEditMode, setIsEditMode] = useState(false);
-  const columnSelectorRef = useRef<HTMLDivElement>(null);
-  const [sortColumn, setSortColumn] = useState<string | null>(null);
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
-  const { toast } = useToast();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [language, setLanguage] = useState<"en" | "ar">("en");
-  const { theme } = useTheme();
+      export default function DoctorsPage() {
+        const [doctors, setDoctors] = useState<Doctor[]>(initialDoctors);
+        const [selectedDoctors, setSelectedDoctors] = useState<number[]>([]);
+        const [showColumnSelector, setShowColumnSelector] = useState(false);
+        const [isFormOpen, setIsFormOpen] = useState(false);
+        const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+        const [doctorToDelete, setDoctorToDelete] = useState<number | null>(null);
+        const [formData, setFormData] = useState<Partial<Doctor>>({});
+        const [isEditMode, setIsEditMode] = useState(false);
+        const columnSelectorRef = useRef<HTMLDivElement>(null);
+        const [sortColumn, setSortColumn] = useState<string | null>(null);
+        const [sortOrder, setSortOrder] = useState<"asc" | "desc" | null>(null);
+        const [currentPage, setCurrentPage] = useState(1);
+        const [itemsPerPage, setItemsPerPage] = useState(5);
+        const { toast } = useToast();
+        const [sidebarOpen, setSidebarOpen] = useState(true);
+        const [language, setLanguage] = useState<"en" | "ar">("en");
+        const { theme } = useTheme();
 
-  const [columns, setColumns] = useState<ColumnToggle[]>([
-    { id: "name", label: "Name", visible: true },
-    { id: "department", label: "Department", visible: true },
-    { id: "specialization", label: "Specialization", visible: true },
-    { id: "availability", label: "Availability", visible: true },
-    { id: "mobile", label: "Mobile", visible: true },
-    { id: "degree", label: "Degree", visible: true },
-    { id: "experience", label: "Experience (Years)", visible: true },
-    { id: "consultationFee", label: "Consultation Fee", visible: true },
-    { id: "email", label: "Email", visible: true },
-  ]);
+        // Single declaration of columns using useState
+        const [columns, setColumns] = useState<ColumnToggle[]>([
+          { id: "checkbox", label: "Select", visible: true }, // Added checkbox column
+          { id: "name", label: "Name", visible: true },
+          { id: "department", label: "Department", visible: true },
+          { id: "specialization", label: "Specialization", visible: true },
+          { id: "availability", label: "Availability", visible: true },
+          { id: "mobile", label: "Mobile", visible: true },
+          { id: "degree", label: "Degree", visible: true },
+          { id: "experience", label: "Experience (Years)", visible: true },
+          { id: "consultationFee", label: "Consultation Fee", visible: true },
+          { id: "email", label: "Email", visible: true },
+          { id: "actions", label: "Actions", visible: true }, // Added actions column
+        ]);
 
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (
-        columnSelectorRef.current &&
-        !columnSelectorRef.current.contains(event.target as Node) &&
-        showColumnSelector
-      ) {
-        setShowColumnSelector(false);
-      }
-    }
+        const columnConfig = [
+          {
+            id: "name",
+            key: "name",
+            label: "Name",
+            render: (item: Doctor) => (
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full flex items-center justify-center text-lg font-medium bg-[#0C4A6E]">
+                  {item.name.charAt(0)}
+                </div>
+                <TruncatedWithTooltip text={item.name} maxWidth="max-w-[120px]" />
+              </div>
+            ),
+          },
+          {
+            id: "department",
+            key: "department",
+            label: "Department",
+            render: (item: Doctor) => <TruncatedWithTooltip text={item.department} maxWidth="max-w-[120px]" />,
+          },
+          {
+            id: "specialization",
+            key: "specialization",
+            label: "Specialization",
+            render: (item: Doctor) => <TruncatedWithTooltip text={item.specialization} maxWidth="max-w-[120px]" />,
+          },
+          {
+            id: "availability",
+            key: "availability",
+            label: "Availability",
+            render: (item: Doctor) => <TruncatedWithTooltip text={item.availability} maxWidth="max-w-[120px]" />,
+          },
+          {
+            id: "mobile",
+            key: "mobile",
+            label: "Mobile",
+            sortable: false,
+            render: (item: Doctor) => <TruncatedWithTooltip text={item.mobile} maxWidth="max-w-[120px]" />,
+          },
+          {
+            id: "degree",
+            key: "degree",
+            label: "Degree",
+            render: (item: Doctor) => <TruncatedWithTooltip text={item.degree} maxWidth="max-w-[120px]" />,
+          },
+          {
+            id: "experience",
+            key: "experience",
+            label: "Experience (Years)",
+            render: (item: Doctor) => <TruncatedWithTooltip text={String(item.experience)} maxWidth="max-w-[120px]" />,
+          },
+          {
+            id: "consultationFee",
+            key: "consultationFee",
+            label: "Consultation Fee",
+            render: (item: Doctor) => <TruncatedWithTooltip text={String(item.consultationFee)} maxWidth="max-w-[120px]" />,
+          },
+          {
+            id: "email",
+            key: "email",
+            label: "Email",
+            sortable: false,
+            render: (item: Doctor) => <TruncatedWithTooltip text={item.email} maxWidth="max-w-[150px]" />,
+          },
+        ];
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [showColumnSelector]);
+        const formFields: FieldConfig[] = [
+          { id: "name", label: "Name", type: "text", required: true },
+          { id: "department", label: "Department", type: "text", required: true },
+          { id: "specialization", label: "Specialization", type: "text", required: true },
+          { id: "availability", label: "Availability", type: "text", required: true },
+          { id: "mobile", label: "Mobile", type: "text", required: true },
+          { id: "degree", label: "Degree", type: "text", required: true },
+          { id: "experience", label: "Experience (Years)", type: "number", required: true },
+          { id: "consultationFee", label: "Consultation Fee", type: "number", required: true },
+          { id: "email", label: "Email", type: "email", required: true, maxWidth: "col-span-2" },
+        ];
 
-  const handleAddClick = useCallback(() => {
-    setFormData({});
-    setIsEditMode(false);
-    setFormModalOpen(true);
-  }, []);
+        useEffect(() => {
+          const handleClickOutside = (event: MouseEvent) => {
+            if (
+              columnSelectorRef.current &&
+              !columnSelectorRef.current.contains(event.target as Node)
+            ) {
+              setShowColumnSelector(false);
+            }
+          };
+          document.addEventListener("mousedown", handleClickOutside);
+          return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+          };
+        }, []);
 
-  const handleEditClick = useCallback((doctor: Doctor) => {
-    setFormData({ ...doctor });
-    setIsEditMode(true);
-    setFormModalOpen(true);
-  }, []);
-
-  const handleDeleteClick = useCallback((id: number) => {
-    setDoctorToDelete(id);
-    setDeleteDialogOpen(true);
-  }, []);
-
-  const handleFormSubmit = useCallback(
-    (data: Partial<Doctor>) => {
-      if (isEditMode && data.id) {
-        setDoctors((prevDoctors) =>
-          prevDoctors.map((doctor) =>
-            doctor.id === data.id ? { ...doctor, ...data } : doctor
-          )
-        );
-        toast({
-          title: "Doctor Updated",
-          description: "Doctor information has been updated successfully.",
-          className:
-            "bg-[#05002E] border border-[#5D0A72]/20 text-white",
-        });
-      } else {
-        const newId =
-          doctors.length > 0
-            ? Math.max(...doctors.map((doctor) => doctor.id)) + 1
-            : 1;
-        const newDoctor = {
-          id: newId,
-          name: data.name || "",
-          department: data.department || "",
-          specialization: data.specialization || "",
-          availability: data.availability || "",
-          mobile: data.mobile || "",
-          degree: data.degree || "",
-          experience: data.experience || 0,
-          consultationFee: data.consultationFee || 0,
-          email: data.email || "",
+        const handleFormSubmit = (data: Partial<Doctor>) => {
+          if (isEditMode && data.id) {
+            setDoctors(doctors.map((doctor) => (doctor.id === data.id ? { ...doctor, ...data } : doctor)));
+            toast({
+              title: "Doctor Updated",
+              description: `${data.name} \'s information has been updated successfully.`,
+              className: "bg-[#05002E] border border-[#5D0A72]/20 text-white",
+            });
+          } else {
+            const newId = doctors.length > 0 ? Math.max(...doctors.map((d) => d.id)) + 1 : 1;
+            const newDoctor: Doctor = { id: newId, ...data } as Doctor;
+            setDoctors([...doctors, newDoctor]);
+            toast({
+              title: "Doctor Added",
+              description: `${data.name} has been added successfully.`,
+              className: "bg-[#05002E] border border-[#5D0A72]/20 text-white",
+            });
+          }
+          setIsFormOpen(false);
         };
-        setDoctors([...doctors, newDoctor]);
-        toast({
-          title: "Doctor Added",
-          description: "New doctor has been added successfully.",
-          className:
-            "bg-[#05002E] border border-[#5D0A72]/20 text-white",
+
+        const handleConfirmDelete = () => {
+          if (doctorToDelete) {
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            // Filter out the doctor with matching ID
+            const updatedDoctors = doctors.filter((doctor) => doctor.id !== doctorToDelete);
+            const updatedCurrentPageItems = updatedDoctors.slice(start, end);
+            const isCurrentPageEmpty = updatedCurrentPageItems.length === 0;
+            // Get the doctor to be deleted
+            const doctorToRemove = doctors.find((d) => d.id === doctorToDelete);
+            
+            setDoctors(updatedDoctors);
+            if (isCurrentPageEmpty && currentPage > 1) {
+              setCurrentPage((prev) => prev - 1);
+            }
+            toast({
+              title: "Doctor Deleted",
+              description: `${doctorToRemove?.name||"doctor"} has been removed successfully.`,
+              variant: "destructive",
+              className: "bg-[#450A0A] border border-red-700/50 text-white",
+            });
+          }
+          setIsDeleteDialogOpen(false);
+          setDoctorToDelete(null);
+        };
+
+        const getExportData = (doctor: Doctor) => ({
+          Name: doctor.name,
+          Department: doctor.department,
+          Specialization: doctor.specialization,
+          Availability: doctor.availability,
+          Mobile: doctor.mobile,
+          Degree: doctor.degree,
+          "Experience (Years)": doctor.experience,
+          "Consultation Fee": doctor.consultationFee,
+          Email: doctor.email,
         });
+
+        return (
+          <div className={`flex h-screen bg-[#05002E] overflow-hidden ${theme === "dark" ? "" : "light-mode"}`}>
+            <Sidebar isOpen={sidebarOpen} />
+            <div className="flex-1 flex flex-col overflow-hidden">
+              <Header
+                title="Doctors"
+                icon={<DoctorWhiteCoatIcon className="h-8 w-8"/>}
+                sidebarOpen={sidebarOpen}
+                setSidebarOpen={setSidebarOpen}
+                language={language}
+                setLanguage={setLanguage}
+              />
+              <div className="flex-1 px-8 py-8 pt-24">
+                {/* Breadcrumbs and Title */}
+                <div className="mb-6">
+                  <h1 className="text-2xl font-bold text-white">View Doctors </h1>
+                </div>
+
+                <GenericTableCard
+                  items={doctors}
+                  setItems={setDoctors}
+                  selectedItems={selectedDoctors}
+                  setSelectedItems={setSelectedDoctors}
+                  columns={columns}
+                  setColumns={setColumns}
+                  showColumnSelector={showColumnSelector}
+                  setShowColumnSelector={setShowColumnSelector}
+                  columnSelectorRef={columnSelectorRef}
+                  sortColumn={sortColumn}
+                  setSortColumn={setSortColumn}
+                  sortOrder={sortOrder}
+                  setSortOrder={setSortOrder}
+                  currentPage={currentPage}
+                  setCurrentPage={setCurrentPage}
+                  itemsPerPage={itemsPerPage}
+                  setItemsPerPage={setItemsPerPage}
+                  onAddClick={() => {
+                    setFormData({});
+                    setIsEditMode(false);
+                    setIsFormOpen(true);
+                  }}
+                  onEditClick={(doctor) => {
+                    setFormData(doctor);
+                    setIsEditMode(true);
+                    setIsFormOpen(true);
+                  }}
+                  onDeleteClick={(id) => {
+                    setDoctorToDelete(id);
+                    setIsDeleteDialogOpen(true);
+                  
+                  }}
+                  initialItems={initialDoctors}
+                  columnConfig={columnConfig}
+                  getExportData={getExportData}
+                  exportFileName="Cliniva_Doctors.xlsx"
+                  entityName="Doctors" // Pass entityName
+                />
+                <GenericFormModal
+                  isOpen={isFormOpen}
+                  onClose={() => setIsFormOpen(false)}
+                  onSubmit={handleFormSubmit}
+                  formData={formData}
+                  setFormData={setFormData}
+                  isEditMode={isEditMode}
+                  title="Doctor"
+                  fields={formFields}
+                />
+                <DeleteConfirmationDialog
+                  isOpen={isDeleteDialogOpen}
+                  onCancel={() => setIsDeleteDialogOpen(false)}
+                  onConfirm={handleConfirmDelete}
+                />
+              </div>
+            </div>
+          </div>
+        );
       }
-      setFormModalOpen(false);
-    },
-    [doctors, isEditMode, toast]
-  );
-
-  const handleDeleteConfirm = useCallback(() => {
-    if (doctorToDelete) {
-      setDoctors((prevDoctors) =>
-        prevDoctors.filter((doctor) => doctor.id !== doctorToDelete)
-      );
-      toast({
-        title: "Doctor Deleted",
-        description: "Doctor has been removed successfully.",
-        variant: "destructive",
-        className: "bg-[#450A0A] border border-red-700/50 text-white",
-      });
-    }
-    setDeleteDialogOpen(false);
-    setDoctorToDelete(null);
-  }, [doctorToDelete, toast]);
-
-  return (
-    <div className={`flex h-screen bg-[#05002E] overflow-hidden ${theme === 'dark' ? '' : 'light-mode'}`}>
-      <Sidebar isOpen={sidebarOpen} />
-      
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <Header 
-          title="Doctors Management" 
-          sidebarOpen={sidebarOpen}
-          setSidebarOpen={setSidebarOpen}
-          language={language}
-          setLanguage={setLanguage}
-        />
-        
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6">
-          <DoctorsTableCard
-            doctors={doctors}
-            setDoctors={setDoctors}
-            selectedDoctors={selectedDoctors}
-            setSelectedDoctors={setSelectedDoctors}
-            columns={columns}
-            setColumns={setColumns}
-            showColumnSelector={showColumnSelector}
-            setShowColumnSelector={setShowColumnSelector}
-            columnSelectorRef={columnSelectorRef}
-            sortColumn={sortColumn}
-            setSortColumn={setSortColumn}
-            sortOrder={sortOrder}
-            setSortOrder={setSortOrder}
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
-            itemsPerPage={itemsPerPage}
-            setItemsPerPage={setItemsPerPage}
-            onAddClick={handleAddClick}
-            onEditClick={handleEditClick}
-            onDeleteClick={handleDeleteClick}
-            initialDoctors={initialDoctors}
-          />
-
-          <DoctorFormModal
-            isOpen={formModalOpen}
-            onClose={() => setFormModalOpen(false)}
-            onSubmit={handleFormSubmit}
-            formData={formData}
-            setFormData={setFormData}
-            isEditMode={isEditMode}
-          />
-
-          <DeleteConfirmationDialog
-            isOpen={deleteDialogOpen}
-            onCancel={() => setDeleteDialogOpen(false)}
-            onConfirm={handleDeleteConfirm}
-          />
-        </main>
-      </div>
-    </div>
-  );
-}

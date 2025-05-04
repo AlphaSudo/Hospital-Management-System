@@ -100,5 +100,8 @@
   },
   "optionalDependencies": {
     "bufferutil": "^4.0.8"
-  }
+  },
+  "main": "postcss.config.js",
+  "author": "",
+  "description": ""
 }

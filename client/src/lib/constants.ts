@@ -35,3 +35,21 @@ export const GRADIENTS = {
   chartOrange: 'linear-gradient(180deg, rgba(255, 87, 87, 0.5) 0%, rgba(255, 87, 87, 0) 100%)',
   chartBlue: 'linear-gradient(180deg, rgba(61, 185, 255, 0.5) 0%, rgba(61, 185, 255, 0) 100%)',
 };
+
+// Calendar Constants
+export const MONTH_NAMES = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+export const WEEKDAYS_SHORT = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+export const WEEKDAYS_LONG = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+// Event Modal Constants
+export const EVENT_MODAL_COLOR_OPTIONS = [
+    { name: 'Green/Teal', value: 'from-green-500 to-teal-600' },
+    { name: 'Orange/Red', value: 'from-orange-500 to-red-600' },
+    { name: 'Red/Pink', value: 'from-red-500 to-pink-600' },
+    { name: 'Cyan/Blue', value: 'from-cyan-500 to-blue-600' },
+    { name: 'Purple/Pink', value: 'from-purple-600 to-pink-600' },
+    { name: 'Yellow/Amber', value: 'from-yellow-500 to-amber-600' },
+    { name: 'Blue/Indigo', value: 'from-blue-600 to-indigo-700' },
+];
+
+export const EVENT_MODAL_COMMON_EMOJIS = ['🎉', '💼', '✈️', '💪', '🎂', '🍕', '❤️', '✨', '📅', '📌', '💡', '💰', '📚', '⚽'];
