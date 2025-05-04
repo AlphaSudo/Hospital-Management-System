@@ -3,17 +3,17 @@ import { Sidebar } from "@/components/ui/sidebar";
 import { Header } from "@/components/ui/Header";
 import { DashboardCard } from "@/components/ui/dashboard-card";
 import { HospitalSurveyChart } from "@/components/ui/dashboard-chart";
-import ChartIcon from "@/components/icons/ChartIcon";
+import ChartIcon from "@/assets/icons/ChartIcon";
 import { RevenueChart } from "@/components/ui/revenue-chart";
-import { hospitalSurveyData, barChartData } from "@/lib/dashboardData";
-import { ChartGradients } from "@/lib/chart-gradients";
+import { hospitalSurveyData, barChartData } from "@/services/dashboardData";
+import { ChartGradients } from "@/utils/chart-gradients";
 // Import extracted icons
-import CalendarIcon from "@/components/icons/CalendarIcon";
-import TrendingUpIcon from "@/components/icons/TrendingUpIcon";
-import ScalpelIcon from "@/components/icons/ScalpelIcon";
-import UserIcon from "@/components/icons/UserIcon";
-import DollarSignIcon from "@/components/icons/DollarSignIcon";
-import ChevronRightIcon from "@/components/icons/ChevronRightIcon";
+import CalendarIcon from "@/assets/icons/CalendarIcon";
+import TrendingUpIcon from "@/assets/icons/TrendingUpIcon";
+import ScalpelIcon from "@/assets/icons/ScalpelIcon";
+import UserIcon from "@/assets/icons/UserIcon";
+import DollarSignIcon from "@/assets/icons/DollarSignIcon";
+import ChevronRightIcon from "@/assets/icons/ChevronRightIcon";
 
 export default function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(true);

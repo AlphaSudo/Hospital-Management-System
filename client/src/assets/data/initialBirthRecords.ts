@@ -1,5 +1,4 @@
-import { BirthRecord } from "../types/birthRecords";
-
+import { BirthRecord } from "@/components/types/birthRecords";
 
 export const initialBirthRecords: BirthRecord[] = [
   {

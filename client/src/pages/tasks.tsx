@@ -2,7 +2,7 @@ import React, { useState, useMemo, useCallback } from 'react';
 import { Sidebar } from '../components/ui/sidebar';
 import { Header } from '../components/ui/Header';
 import { FaPlus } from 'react-icons/fa';
-import CheckListIcon from '../components/icons/CheckListIcon.tsx';
+import CheckListIcon from '../assets/icons/CheckListIcon.tsx';
 import { useTasks } from '../hooks/useTasks';
 import { TaskList } from '../components/tasks/TaskList';
 import { TaskForm } from '../components/tasks/TaskForm';

@@ -1,4 +1,4 @@
-import { Patient } from "../types/patient";
+import { Patient } from "@/components/types/patient";
 
 export const initialPatients: Patient[] = [
   {

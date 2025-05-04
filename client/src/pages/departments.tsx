@@ -7,12 +7,12 @@ import {
   FieldConfig,
 } from "@/components/ui/GenericFormModal";
 import { DeleteConfirmationDialog } from "@/components/ui/DeleteConfirmationDialog";
-import { initialDepartments } from "@/components/data/initialDepartments";
+import { initialDepartments } from "@/assets/data/initialDepartments";
 import { Header } from "@/components/ui/Header";
 import { Sidebar } from "@/components/ui/sidebar";
-import { useTheme } from "@/lib/ThemeContext";
+import { useTheme } from "@/contexts/ThemeContext";
 import { TruncatedWithTooltip } from "@/components/utils/constants";
-import DepartmentIcon from "@/components/icons/DepartmentIcon";
+import DepartmentIcon from "@/assets/icons/DepartmentIcon";
 
 export default function DepartmentsPage() {
   const [departments, setDepartments] =

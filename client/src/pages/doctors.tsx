@@ -4,12 +4,12 @@
       import  GenericTableCard  from "@/components/ui/GenericTableCard";
       import { GenericFormModal, FieldConfig } from "@/components/ui/GenericFormModal";
       import { DeleteConfirmationDialog } from "@/components/ui/DeleteConfirmationDialog";
-      import { initialDoctors } from "@/components/data/initialDoctors";
+      import { initialDoctors } from "@/assets/data/initialDoctors";
       import { Header } from "@/components/ui/Header";
       import { Sidebar } from "@/components/ui/sidebar";
-      import { useTheme } from "@/lib/ThemeContext";
+      import { useTheme } from "@/contexts/ThemeContext";
       import { TruncatedWithTooltip } from "@/components/utils/constants";
-import DoctorWhiteCoatIcon from "@/components/icons/DoctorWhiteCoatIcon";
+import DoctorWhiteCoatIcon from "@/assets/icons/DoctorWhiteCoatIcon";
 
       export default function DoctorsPage() {
         const [doctors, setDoctors] = useState<Doctor[]>(initialDoctors);
@@ -139,6 +139,18 @@ import DoctorWhiteCoatIcon from "@/components/icons/DoctorWhiteCoatIcon";
         }, []);
 
         const handleFormSubmit = (data: Partial<Doctor>) => {
+           // Validate phone number
+    const phoneRegex = /^\d{3}-\d{3}-\d{4}$/;
+    if (!data.mobile || !phoneRegex.test(data.mobile)) {
+      toast({
+        title: "Invalid Phone Number",
+        description: "Please enter a valid phone number in the format XXX-XXX-XXXX.",
+        variant: "destructive",
+        className: "bg-[#450A0A] border border-red-700/50 text-white",
+      });
+      return;
+    }
+
           if (isEditMode && data.id) {
             setDoctors(doctors.map((doctor) => (doctor.id === data.id ? { ...doctor, ...data } : doctor)));
             toast({

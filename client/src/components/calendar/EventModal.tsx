@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { CalendarEvent, EventCategory, eventCategories } from "@/types/calendar";
-import { getDaysInMonth } from "@/lib/dateUtils";
-import { MONTH_NAMES, EVENT_MODAL_COLOR_OPTIONS, EVENT_MODAL_COMMON_EMOJIS } from "@/lib/constants";
+import { getDaysInMonth } from "@/utils/dateUtils";
+import { MONTH_NAMES, EVENT_MODAL_COLOR_OPTIONS, EVENT_MODAL_COMMON_EMOJIS } from "@/utils/constants";
 
 interface EventModalProps {
   isOpen: boolean;
@@ -52,9 +52,8 @@ export const EventModal = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const maxDays = getDaysInMonth(currentYear, currentMonth);
-    if (!title || !day || day < 1 || day > maxDays || durationDays < 1) {
-        console.error("Validation failed:", { title, day, maxDays, durationDays });
+    if (!title || !day || day < 1 || day > maxDayInMonth || durationDays < 1) {
+        console.error("Validation failed:", { title, day, maxDayInMonth, durationDays });
         // Add user feedback here (e.g., alert, form validation messages)
         return;
     }
@@ -80,10 +79,13 @@ export const EventModal = ({
     }
     onClose();
   };
+  
+    // Memoize the calculation for the maximum day in the month
+  const maxDayInMonth = useMemo(() => {
+    return getDaysInMonth(currentYear, currentMonth);
+  }, [currentYear, currentMonth]);
 
   if (!isOpen) return null;
-
-  const maxDayInMonth = getDaysInMonth(currentYear, currentMonth);
 
   return (
     <div
@@ -169,8 +171,8 @@ export const EventModal = ({
               onChange={(e) => setCategory(e.target.value as EventCategory)}
               required
               className="w-full p-2 rounded bg-[#1e1b47]/80 border border-white/20 focus:ring-2 focus:ring-pink-500 outline-none capitalize"
-            >
-              {eventCategories.map(cat => (
+             >
+              {eventCategories.map((cat: EventCategory) => ( // Add type EventCategory
                 <option key={cat} value={cat} className="bg-[#1a1440] capitalize">
                   {cat}
                 </option>
@@ -187,7 +189,7 @@ export const EventModal = ({
               className="w-full p-2 rounded bg-[#1e1b47]/80 border border-white/20 focus:ring-2 focus:ring-pink-500 outline-none appearance-none text-center"
               style={{ fontSize: '1.5rem' }}
             >
-              {EVENT_MODAL_COMMON_EMOJIS.map(em => (
+              {EVENT_MODAL_COMMON_EMOJIS.map((em: string) => ( // Add type string
                 <option key={em} value={em} className="bg-[#1a1440]">
                   {em}
                 </option>
@@ -198,7 +200,8 @@ export const EventModal = ({
           <div>
             <label className="block mb-2 text-sm font-medium text-purple-300">Color Theme</label>
             <div className="grid grid-cols-3 gap-2">
-                {EVENT_MODAL_COLOR_OPTIONS.map(color => (
+                {/* Add inline type for color object */}
+                {EVENT_MODAL_COLOR_OPTIONS.map((color: { value: string; name: string }) => ( 
                     <label key={color.value} className={`flex items-center gap-2 p-2 rounded-lg border-2 cursor-pointer transition-all ${selectedColor === color.value ? 'border-pink-500 bg-purple-900/50' : 'border-transparent hover:border-white/30 bg-[#1e1b47]/60'}`}>
                         <input
                             type="radio"

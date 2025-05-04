@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useMemo } from 'react'; // Import useMemo
 import { CalendarEvent } from '@/types/calendar';
-import { addDays, getEventDateRange } from '@/lib/dateUtils';
-import { WEEKDAYS_SHORT } from '@/lib/constants';
+import { addDays, getEventDateRange } from '@/utils/dateUtils';
+import { WEEKDAYS_SHORT } from '@/utils/constants';
 
 interface WeekViewProps {
   weekStartDate: Date;
@@ -18,10 +18,34 @@ export const WeekView: React.FC<WeekViewProps> = ({
   openAddModal,
   openEditModal,
 }) => {
-  const weekDays: Date[] = Array.from({ length: 7 }).map((_, i) => addDays(weekStartDate, i));
+  // Memoize week days calculation
+  const weekDays = useMemo(() => {
+    return Array.from({ length: 7 }).map((_, i) => addDays(weekStartDate, i));
+  }, [weekStartDate]);
+
+  // Memoize the calculation of events per day for the week
+  const eventsByDay = useMemo(() => {
+    const eventsMap: { [key: string]: CalendarEvent[] } = {};
+    weekDays.forEach(day => {
+      const dayStart = day;
+      const dayEnd = addDays(dayStart, 1);
+      const dayEvents = events
+        .filter(event => {
+          const [eventStart, eventEnd] = getEventDateRange(event);
+          // Check if the event interval overlaps with the day interval
+          return eventStart < dayEnd && eventEnd > dayStart;
+        })
+        .sort((a: CalendarEvent, b: CalendarEvent) =>
+          (a.startTime || "").localeCompare(b.startTime || "")
+        );
+      eventsMap[day.toISOString()] = dayEvents; // Use ISO string as key
+    });
+    return eventsMap;
+  }, [events, weekDays]); // Dependencies: events and the calculated weekDays
 
   return (
     <div className="grid grid-cols-7 gap-1 md:gap-2 text-white">
+      {/* Header Row */}
       {weekDays.map(day => {
         const isToday = day.getTime() === today.getTime();
         return (
@@ -31,21 +55,17 @@ export const WeekView: React.FC<WeekViewProps> = ({
           </div>
         );
       })}
+      {/* Content Columns */}
       {weekDays.map(day => {
-        const dayStart = day;
-        const dayEnd = addDays(dayStart, 1);
-        const dayEvents = events.filter(event => {
-           const [eventStart, eventEnd] = getEventDateRange(event);
-           return eventStart < dayEnd && eventEnd > dayStart;
-        });
+        // Retrieve pre-calculated and sorted events for the day
+        const dayEvents = eventsByDay[day.toISOString()] || [];
         const eventBaseStyle = "mt-1 px-1.5 py-1 rounded shadow-md shadow-black/40 flex items-center gap-1.5 text-xs font-medium text-white/95 cursor-pointer hover:opacity-80 transition-opacity";
 
         return (
           <div key={`col-${day.toISOString()}`} className="min-h-[200px] border-l border-white/10 first:border-l-0 px-1 space-y-1.5 flex flex-col">
-             <div className="flex-grow space-y-1.5">
-                 {dayEvents
-                   .sort((a: CalendarEvent, b: CalendarEvent) => (a.startTime || "").localeCompare(b.startTime || ""))
-                   .map((event: CalendarEvent) => (
+             <div className="flex-grow space-y-1.5 overflow-y-auto max-h-[calc(100%-2rem)] scrollbar-thin scrollbar-thumb-purple-400/50 scrollbar-track-transparent pr-1"> {/* Added overflow and scrollbar */}
+                 {/* Events are already filtered and sorted */}
+                 {dayEvents.map((event: CalendarEvent) => (
                       <div
                         key={event.id}
                         className={`${eventBaseStyle} bg-gradient-to-r ${event.colorGradient}`}

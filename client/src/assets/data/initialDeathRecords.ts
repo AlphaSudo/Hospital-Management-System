@@ -1,4 +1,4 @@
-import { DeathRecord } from "../types/deathRecords";
+import { DeathRecord } from "@/components/types/deathRecords";
 
 export const initialDeathRecords: DeathRecord[] = [
     {

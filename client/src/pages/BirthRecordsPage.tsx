@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { initialBirthRecords } from "@/components/data/initialBirthRecords";
+import { initialBirthRecords } from "@/assets/data/initialBirthRecords";
 import { ColumnToggle } from "@/components/types/patient";
 import GenericTableCard from "@/components/ui/GenericTableCard";
 import {
@@ -10,9 +10,9 @@ import {
 import { DeleteConfirmationDialog } from "@/components/ui/DeleteConfirmationDialog";
 import { Header } from "@/components/ui/Header";
 import { Sidebar } from "@/components/ui/sidebar";
-import { useTheme } from "@/lib/ThemeContext";
+import { useTheme } from "@/contexts/ThemeContext";
 import { TruncatedWithTooltip } from "@/components/utils/constants";
-import {BirthRecordsIcon} from "@/components/icons/BirthRecordsIcon";
+import {BirthRecordsIcon} from "@/assets/icons/BirthRecordsIcon";
 import {BirthRecord} from "@/components/types/birthRecords";
 
 export default function BirthRecordsPage() {
@@ -150,7 +150,6 @@ export default function BirthRecordsPage() {
       label: "Mobile",
       type: "tel",
       required: true,
-       pattern: "^(?:\\+[1-9]\\d{10}|\\d{3}-\\d{3}-\\d{4})$",
     },
     { id: "address", label: "Address", type: "text", required: true },
     { id: "notes", label: "Notes", type: "text", required: false },

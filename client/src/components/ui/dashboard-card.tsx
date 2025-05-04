@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/utils";
 
 export interface DashboardCardProps {
   title: string;
@@ -36,12 +36,15 @@ export function DashboardCard({
       "p-[1px] rounded-2xl bg-[conic-gradient(#d44317,#731d21_45deg,#be2d14_90deg,#be3816_135deg,#91231a_180deg,#712327_225deg,#f3480a_270deg,#ffa715_315deg,#d44317_360deg)]",
     /*----------------*/
     blue: "p-[1px] rounded-2xl bg-[conic-gradient(#072f93,#03115e_45deg,#031b78_90deg,#0f42c1_135deg,#021a70_180deg,#031a63_225deg,#0a70d2_270deg,#0e82ea_315deg,#072f93_360deg)]",
+    // Add the missing key, reusing the purple border for now
+    "purple-dark":
+      "p-[1px] rounded-2xl bg-[conic-gradient(#b10170,#51025d_45deg,#8f0946_90deg,#971385_135deg,#2d016f_180deg,#1a026a_225deg,#850d9e_270deg,#fb0aa3_315deg,#b10170_360deg)]",
   };
 
   return (
     <div
       className={cn(
-        borderClasses[gradient], // Original classes like p-[1px] rounded-2xl bg-[conic...]
+        borderClasses[gradient], // Now this access is safe
         "grid ", // Make outer div a grid container
       )}
     >

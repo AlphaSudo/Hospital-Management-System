@@ -7,10 +7,10 @@ import {
   FieldConfig,
 } from "@/components/ui/GenericFormModal";
 import { DeleteConfirmationDialog } from "@/components/ui/DeleteConfirmationDialog";
-import { initialRooms } from "@/components/data/initialRooms";
+import { initialRooms } from "@/assets/data/initialRooms";
 import { Header } from "@/components/ui/Header";
 import { Sidebar } from "@/components/ui/sidebar";
-import { useTheme } from "@/lib/ThemeContext";
+import { useTheme } from "@/contexts/ThemeContext";
 import { TruncatedWithTooltip } from "@/components/utils/constants";
 
 export default function RoomsPage() {
@@ -183,7 +183,6 @@ export default function RoomsPage() {
       label: "Mobile",
       type: "tel",
       required: true,
-      pattern: "^\\d{3}-\\d{3}-\\d{4}$",
     },
     { id: "doctorAssigned", label: "Doctor Assigned", type: "text", required: true },
     {

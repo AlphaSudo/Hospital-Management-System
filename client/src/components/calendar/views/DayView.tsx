@@ -1,6 +1,6 @@
-import React from 'react';
-import { CalendarEvent } from '@/types/calendar'; // Reverted to alias path
-import { MONTH_NAMES, WEEKDAYS_LONG } from '@/lib/constants'; // Reverted to alias path
+import React, { useMemo } from 'react'; // Import useMemo
+import { CalendarEvent } from '@/types/calendar';
+import { MONTH_NAMES, WEEKDAYS_LONG } from '@/utils/constants';
 
 interface DayViewProps {
   currentDate: Date;
@@ -17,20 +17,27 @@ export const DayView: React.FC<DayViewProps> = ({
   openAddModal,
   openEditModal,
 }) => {
-  const dayEvents = events;
+  // const dayEvents = events; // Removed redundant variable
   const isToday = currentDate.getTime() === today.getTime();
   const eventBaseStyle = "px-3 py-2 rounded-lg shadow-md shadow-black/40 flex items-center gap-3 text-sm font-medium text-white/95 cursor-pointer hover:opacity-90 transition-opacity";
+
+  // Memoize the sorted events
+  const sortedDayEvents = useMemo(() => {
+    // Create a new array before sorting to avoid mutating the prop
+    return [...events].sort((a: CalendarEvent, b: CalendarEvent) => 
+      (a.startTime || "00:00").localeCompare(b.startTime || "00:00")
+    );
+  }, [events]); // Recalculate only when events array changes
 
   return (
       <div className="space-y-3 max-w-2xl mx-auto w-full">
           <h2 className={`text-2xl font-semibold text-center mb-4 ${isToday ? 'text-pink-400' : 'text-purple-300'}`}>
               {WEEKDAYS_LONG[currentDate.getDay()]}, {MONTH_NAMES[currentDate.getMonth()]} {currentDate.getDate()}
           </h2>
-          {dayEvents.length === 0 && (
+          {sortedDayEvents.length === 0 && ( // Use the memoized variable
               <p className="text-center text-gray-400 py-6">No events scheduled for this day.</p>
           )}
-          {dayEvents
-              .sort((a: CalendarEvent, b: CalendarEvent) => (a.startTime || "00:00").localeCompare(b.startTime || "00:00"))
+          {sortedDayEvents // Use the memoized variable
               .map((event: CalendarEvent) => (
                   <div
                       key={event.id}

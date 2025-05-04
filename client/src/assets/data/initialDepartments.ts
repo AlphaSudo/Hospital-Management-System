@@ -1,4 +1,4 @@
-import { Department } from "../types/department";
+import { Department } from "@/components/types/department";
 export const initialDepartments : Department[] = [
   {
     id: 1,

@@ -7,12 +7,12 @@ import {
   FieldConfig,
 } from "@/components/ui/GenericFormModal";
 import { DeleteConfirmationDialog } from "@/components/ui/DeleteConfirmationDialog";
-import { initialPatients } from "@/components/data/initialPatients";
+import { initialPatients } from "@/assets/data/initialPatients";
 import { Header } from "@/components/ui/Header";
 import { Sidebar } from "@/components/ui/sidebar";
-import { useTheme } from "@/lib/ThemeContext";
+import { useTheme } from "@/contexts/ThemeContext";
 import { TruncatedWithTooltip } from "@/components/utils/constants";
-import PatientIcon from "@/components/icons/PatientIcon";
+import PatientIcon from "@/assets/icons/PatientIcon";
 
 export default function PatientsPage() {
   const [patients, setPatients] = useState<Patient[]>(initialPatients);
@@ -155,7 +155,6 @@ export default function PatientsPage() {
       label: "Mobile",
       type: "tel",
       required: true,
-      pattern: "^\\d{3}-\\d{3}-\\d{4}$",
     },
     { id: "admissionDate", label: "Admission Date", type: "date", required: true,},
     { id: "doctorAssigned", label: "Doctor Assigned", type: "text", required: true },

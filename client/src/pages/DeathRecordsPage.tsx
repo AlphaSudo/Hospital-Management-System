@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { initialDeathRecords } from "@/components/data/initialDeathRecords";
+import { initialDeathRecords } from "@/assets/data/initialDeathRecords";
 import { DeathRecord } from "@/components/types/deathRecords";
 import { ColumnToggle } from "@/components/types/patient";
 import GenericTableCard from "@/components/ui/GenericTableCard";
@@ -11,9 +11,9 @@ import {
 import { DeleteConfirmationDialog } from "@/components/ui/DeleteConfirmationDialog";
 import { Header } from "@/components/ui/Header";
 import { Sidebar } from "@/components/ui/sidebar";
-import { useTheme } from "@/lib/ThemeContext";
+import { useTheme } from "@/contexts/ThemeContext";
 import { TruncatedWithTooltip } from "@/components/utils/constants";
-import DeathRecordsIcon from "@/components/icons/DeathRecordsIcon";
+import DeathRecordsIcon from "@/assets/icons/DeathRecordsIcon";
 
 export default function DeathRecordsPage() {
   const [records, setRecords] = useState<DeathRecord[]>(initialDeathRecords);
@@ -140,7 +140,6 @@ export default function DeathRecordsPage() {
       label: "Mobile",
       type: "tel",
       required: true,
-      pattern: "^(?:\\+[1-9]\\d{10}|\\d{3}-\\d{3}-\\d{4})$",
     },
     { id: "address", label: "Address", type: "text", required: true },
     { id: "notes", label: "Notes", type: "text", required: false },

@@ -1,4 +1,4 @@
-import { Doctor } from "../types/doctor";
+import { Doctor } from "@/components/types/doctor";
 
 export const initialDoctors: Doctor[] = [
   {

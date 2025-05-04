@@ -11,8 +11,8 @@ import {
     formatDate,
     getEventDateRange,
     normalizeDate
-} from "../lib/dateUtils";
-import { MONTH_NAMES, WEEKDAYS_SHORT, WEEKDAYS_LONG } from "../lib/constants";
+} from "../utils/dateUtils";
+import { MONTH_NAMES, WEEKDAYS_SHORT, WEEKDAYS_LONG } from "../utils/constants";
 import { EventModal } from "../components/calendar/EventModal";
 // Import the view components
 import { MonthView } from "../components/calendar/views/MonthView";

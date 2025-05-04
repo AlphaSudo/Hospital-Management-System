@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useMemo } from 'react'; // Import useMemo
 import { CalendarEvent } from '@/types/calendar';
-import { normalizeDate, getEventDateRange } from '@/lib/dateUtils';
-import { WEEKDAYS_SHORT } from '@/lib/constants';
+import { normalizeDate, getEventDateRange } from '@/utils/dateUtils';
+import { WEEKDAYS_SHORT } from '@/utils/constants';
 
 interface MonthViewProps {
   year: number;
@@ -27,6 +27,26 @@ export const MonthView: React.FC<MonthViewProps> = ({
   const daysInMonth = getDaysInMonth(year, month);
   const firstDayIndex = getFirstDayOfMonth(year, month);
 
+  // Memoize the calculation of events per day
+  const eventsByDay = useMemo(() => {
+    const eventsMap: { [day: number]: CalendarEvent[] } = {};
+    for (let day = 1; day <= daysInMonth; day++) {
+      const cellDate = normalizeDate(new Date(year, month, day));
+      const dayEvents = events
+        .filter(event => {
+          const [eventStart, eventEnd] = getEventDateRange(event);
+          return cellDate >= eventStart && cellDate < eventEnd;
+        })
+        .sort((a: CalendarEvent, b: CalendarEvent) =>
+          (a.startTime || "").localeCompare(b.startTime || "")
+        );
+      if (dayEvents.length > 0) {
+        eventsMap[day] = dayEvents;
+      }
+    }
+    return eventsMap;
+  }, [events, year, month, daysInMonth]); // Dependencies
+
   return (
     <div className="grid grid-cols-7 gap-1 md:gap-2 text-white text-xs md:text-sm">
       {WEEKDAYS_SHORT.map(day => (
@@ -42,10 +62,8 @@ export const MonthView: React.FC<MonthViewProps> = ({
         const cellDate = normalizeDate(new Date(year, month, dayOfMonth));
         const isToday = cellDate.getTime() === today.getTime();
 
-        const dayEvents = events.filter(event => {
-          const [eventStart, eventEnd] = getEventDateRange(event);
-          return cellDate >= eventStart && cellDate < eventEnd;
-        });
+        // Retrieve pre-calculated and sorted events for the day
+        const dayEvents = eventsByDay[dayOfMonth] || [];
 
         const eventBaseStyle = "mt-1 px-1.5 py-0.5 rounded shadow-md shadow-black/40 flex items-center gap-1 text-[10px] md:text-xs font-medium text-white/95 cursor-pointer hover:opacity-80 transition-opacity";
 
@@ -71,9 +89,8 @@ export const MonthView: React.FC<MonthViewProps> = ({
               {dayOfMonth}
             </span>
             <div className="overflow-y-auto max-h-[calc(100%-1.5rem)] md:max-h-[calc(100%-1.8rem)] w-full px-0.5 space-y-1 scrollbar-thin scrollbar-thumb-purple-400/50 scrollbar-track-transparent">
-              {dayEvents
-                .sort((a: CalendarEvent, b: CalendarEvent) => (a.startTime || "").localeCompare(b.startTime || ""))
-                .map((event: CalendarEvent) => (
+              {/* Events are already filtered and sorted */}
+              {dayEvents.map((event: CalendarEvent) => (
                   <div
                     key={event.id}
                     className={`${eventBaseStyle} bg-gradient-to-r ${event.colorGradient}`}

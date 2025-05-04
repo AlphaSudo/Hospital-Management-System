@@ -1,4 +1,4 @@
-import { Room } from "../types/room";
+import { Room } from "@/components/types/room";
 
 export const initialRooms: Room[] = [
   {

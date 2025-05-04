@@ -1,17 +1,17 @@
 import { useState } from "react";
 import { useLocation, Link } from "wouter";
-import { cn } from "@/lib/utils";
-import  DoctorWhiteCoatIcon  from '../icons/DoctorWhiteCoatIcon.tsx';
-import DepartmentIcon from '../icons/DepartmentIcon.tsx';
-import AppointmentsIcon from '../icons/AppointmentIcon.tsx';
-import ReportIcon from '../icons/ReportIcon.tsx';
-import PatientIcon from '../icons/PatientIcon.tsx';
-import ChartIcon from '../icons/ChartIcon.tsx';
-import StaffIcon from "../icons/StaffIcon.tsx";
-import { BirthRecordsIcon } from "../icons/BirthRecordsIcon.tsx";
-import  DeathRecordsIcon  from "../icons/DeathRecordsIcon.tsx";
+import { cn } from "@/utils/utils";
+import  DoctorWhiteCoatIcon  from '@/assets/icons/DoctorWhiteCoatIcon.tsx';
+import DepartmentIcon from '@/assets/icons/DepartmentIcon.tsx';
+import AppointmentsIcon from '@/assets/icons/AppointmentIcon.tsx';
+import ReportIcon from '@/assets/icons/ReportIcon.tsx';
+import PatientIcon from '@/assets/icons/PatientIcon.tsx';
+import ChartIcon from '@/assets/icons/ChartIcon.tsx';
+import StaffIcon from "@/assets/icons/StaffIcon.tsx";
+import { BirthRecordsIcon } from "@/assets/icons/BirthRecordsIcon.tsx";
+import  DeathRecordsIcon  from "@/assets/icons/DeathRecordsIcon.tsx";
 import {AppWindowIcon}  from "lucide-react";
-import CheckListIcon from '../icons/CheckListIcon.tsx';
+import CheckListIcon from '@/assets/icons/CheckListIcon.tsx';
 
 interface NavigationItem {
   name: string;

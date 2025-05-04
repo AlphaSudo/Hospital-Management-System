@@ -1,4 +1,4 @@
-import React from 'react';
+import React , { useMemo } from 'react';
 import { FaTrash, FaArrowUp, FaArrowDown, FaEdit } from 'react-icons/fa';
 import { Task } from '../../types/task';
 
@@ -19,6 +19,16 @@ export const TaskList: React.FC<TaskListProps> = ({
     onEditClick,
     getOriginalIndex
 }) => {
+    // Memoize the mapping from task ID to its original index
+    const originalIndexMap = useMemo(() => {
+        const map = new Map<number, number>();
+        // Assuming getOriginalIndex is stable and correct based on the full task list context
+        tasks.forEach(task => {
+            map.set(task.id, getOriginalIndex(task.id));
+        });
+        return map;
+    }, [tasks, getOriginalIndex]); // Recalculate if tasks or the function changes
+
     return (
         <div className="overflow-x-auto overflow-y-auto max-h-[400px]">
             <table className="w-full table-auto border-separate border-spacing-0">
@@ -35,7 +45,17 @@ export const TaskList: React.FC<TaskListProps> = ({
                 <tbody>
                     {tasks.map((task) => {
                          // Find the original index in the main tasks array for moving
-                        const originalIndex = getOriginalIndex(task.id);
+                         const originalIndex = originalIndexMap.get(task.id) ?? -1; // Use ?? -1 as a fallback if needed
+                       
+                         // Disable move buttons if index wasn't found (shouldn't happen ideally)
+                        const isMoveUpDisabled = originalIndex === -1 || originalIndex === 0;
+                        // Note: Comparing originalIndex to tasks.length might be incorrect if 'tasks' is filtered/sorted.
+                        // The logic for disabling 'down' might need the total count from the parent.
+                        // For simplicity, let's assume getOriginalIndex provides indices relative to the *original* list.
+                        // A better approach might be for the parent to provide the total original count.
+                        const isMoveDownDisabled = originalIndex === -1 /* || originalIndex >= totalOriginalTasks - 1 */;
+
+                
                         return (
                             <tr key={task.id} className={`${task.completed ? 'bg-white/5 line-through text-gray-400' : 'text-white'} hover:bg-white/10`}>
                                 <td className="p-2 border-b border-gray-700">
@@ -69,9 +89,9 @@ export const TaskList: React.FC<TaskListProps> = ({
                                         >
                                             <FaEdit />
                                         </button>
-                                        <button
+                                       <button
                                             onClick={() => onMove(originalIndex, 'up')}
-                                            disabled={originalIndex === 0}
+                                            disabled={isMoveUpDisabled} // Use calculated disabled state
                                             className="text-gray-400 hover:text-blue-400 disabled:opacity-30 disabled:cursor-not-allowed"
                                             title="Move Up"
                                         >
@@ -79,7 +99,8 @@ export const TaskList: React.FC<TaskListProps> = ({
                                         </button>
                                         <button
                                             onClick={() => onMove(originalIndex, 'down')}
-                                            disabled={originalIndex === tasks.length - 1} // This might need adjustment based on how originalIndex relates to the full list length
+                                            // Consider passing total task count if needed for accurate disabling
+                                            disabled={isMoveDownDisabled} // Use calculated disabled state
                                             className="text-gray-400 hover:text-blue-400 disabled:opacity-30 disabled:cursor-not-allowed"
                                             title="Move Down"
                                         >

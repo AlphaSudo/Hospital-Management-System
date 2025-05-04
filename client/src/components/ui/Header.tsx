@@ -1,4 +1,4 @@
-import EgyptFlag from "../icons/EgyptFlag";
+import EgyptFlag from "@/assets/icons/EgyptFlag";
 import { ThemeToggle } from "./ThemeToggle";
 
 interface HeaderProps {

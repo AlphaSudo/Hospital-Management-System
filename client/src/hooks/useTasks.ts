@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { initialTasks } from '../components/data/initialTasks';
+import { initialTasks } from '../assets/data/initialTasks';
 import { Task } from '../types/task'; // Assuming Task type is defined here or adjust path
 
 // Helper to format date for display (e.g., "May 04, 2025")

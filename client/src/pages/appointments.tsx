@@ -8,12 +8,12 @@ import {
   FieldConfig,
 } from "@/components/ui/GenericFormModal";
 import { DeleteConfirmationDialog } from "@/components/ui/DeleteConfirmationDialog";
-import { initialAppointments } from "@/components/data/initialAppointments";
+import { initialAppointments } from "@/assets/data/initialAppointments";
 import { Header } from "@/components/ui/Header";
 import { Sidebar } from "@/components/ui/sidebar";
-import { useTheme } from "@/lib/ThemeContext";
+import { useTheme } from "@/contexts/ThemeContext";
 import { TruncatedWithTooltip } from "@/components/utils/constants";
-import AppointmentsIcon from "@/components/icons/AppointmentIcon";
+import AppointmentsIcon from "@/assets/icons/AppointmentIcon";
 
 
 export default function AppointmentsPage() {
@@ -179,7 +179,6 @@ const formFields: FieldConfig[] = [
       label: "Mobile",
       type: "tel",
       required: true,
-      pattern: "^(?:\\+[1-9]\\d{10}|\\d{3}-\\d{3}-\\d{4})$",
     },
   {
     id: "doctor",
@@ -379,7 +378,7 @@ useEffect(() => {
             formData={formData}
             setFormData={setFormData}
             isEditMode={isEditMode}
-            title="Add / Edit Appointment"
+            title=" Appointment"
             fields={formFields}
             />
 

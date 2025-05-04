@@ -1,4 +1,4 @@
-import { Staff } from "../types/staff";
+import { Staff } from "@/components/types/staff";
 
 export const initialStaff: Staff[] = [
   {

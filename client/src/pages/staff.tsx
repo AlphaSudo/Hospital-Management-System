@@ -7,12 +7,12 @@ import {
   FieldConfig,
 } from "@/components/ui/GenericFormModal";
 import { DeleteConfirmationDialog } from "@/components/ui/DeleteConfirmationDialog";
-import { initialStaff } from "@/components/data/initialStaff";
+import { initialStaff } from "@/assets/data/initialStaff";
 import { Header } from "@/components/ui/Header";
 import { Sidebar } from "@/components/ui/sidebar";
-import { useTheme } from "@/lib/ThemeContext";
+import { useTheme } from "@/contexts/ThemeContext";
 import { TruncatedWithTooltip } from "@/components/utils/constants";
-import StaffIcon from "@/components/icons/StaffIcon";
+import StaffIcon from "@/assets/icons/StaffIcon";
 
 export default function StaffPage() {
   const [staff, setStaff] = useState<Staff[]>(initialStaff);
@@ -145,6 +145,7 @@ export default function StaffPage() {
       type: "select",
       required: true,
       options: [
+        { value: "", label: "Please select your gender", disabled: true },
         { value: "Male", label: "Male" },
         { value: "Female", label: "Female" },
       ],
@@ -154,7 +155,6 @@ export default function StaffPage() {
       label: "Mobile",
       type: "tel",
       required: true,
-      pattern: "^\\d{3}-\\d{3}-\\d{4}$",
     },
     { id: "admissionDate", label: "Hire Date", type: "date", required: true },
     { id: "doctorAssigned", label: "Supervisor", type: "text", required: true },
@@ -183,6 +183,7 @@ export default function StaffPage() {
       type: "select",
       required: true,
       options: [
+        { value: "", label: "Please choose status", disabled: true },
         { value: "Active", label: "Active" },
         { value: "Terminated", label: "Terminated" },
         { value: "On Leave", label: "On Leave" },
@@ -206,16 +207,7 @@ export default function StaffPage() {
   }, []);
 
   const handleFormSubmit = (data: Partial<Staff>) => {
-    // Validate blood group
-    if (!data.bloodGroup || data.bloodGroup === "") {
-      toast({
-        title: "Invalid Blood Group",
-        description: "Please select a valid blood type.",
-        variant: "destructive",
-        className: "bg-[#450A0A] border border-red-700/50 text-white",
-      });
-      return;
-    }
+    
 
     // Validate phone number
     const phoneRegex = /^\d{3}-\d{3}-\d{4}$/;
